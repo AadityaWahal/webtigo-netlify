@@ -84,7 +84,8 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 // Clerk Middleware (MUST be before routes that need auth)
 // Wrap in a key check to prevent server errors (500) if environment variables are not configured in Vercel.
-const hasClerkKeys = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY) && !!process.env.CLERK_SECRET_KEY;
+const isNetlify = process.env.NETLIFY === 'true';
+const hasClerkKeys = !isNetlify && !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY) && !!process.env.CLERK_SECRET_KEY;
 
 if (hasClerkKeys) {
     app.use(clerkMiddleware({
@@ -92,7 +93,11 @@ if (hasClerkKeys) {
         secretKey: process.env.CLERK_SECRET_KEY
     }));
 } else {
-    console.warn("⚠️ WARNING: Clerk Keys are missing. Auth middleware is disabled, and users will not be able to sign in.");
+    if (isNetlify) {
+        console.log("ℹ️ Clerk auth middleware bypassed on Netlify to prevent redirect loops.");
+    } else {
+        console.warn("⚠️ WARNING: Clerk Keys are missing. Auth middleware is disabled, and users will not be able to sign in.");
+    }
     // Fallback middleware to mock auth object so templates don't crash
     app.use((req, res, next) => {
         req.auth = { userId: null };
@@ -143,17 +148,7 @@ app.use((req, res, next) => {
     const host = req.headers.host;
     res.locals.siteUrl = `${protocol}://${host}`;
 
-    const redirects = {
-        '/tts.html': '/tts',
-        '/image_compressor.html': '/compressor',
-        '/qr_code.html': '/qrcode',
-        '/index.html': '/',
-        '/ads.txt': '/Ads.txt'
-    };
-
-    if (redirects[req.path]) {
-        return res.redirect(301, redirects[req.path]);
-    }
+    // Redirects were removed as they are no longer needed
     next();
 });
 
