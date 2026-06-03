@@ -139,8 +139,8 @@ function getClerkFrontendApi(publishableKey) {
 // Global View Variables
 app.use((req, res, next) => {
     res.locals.currentPath = req.path;
-    res.locals.clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY;
-    res.locals.clerkFrontendApi = getClerkFrontendApi(res.locals.clerkPublishableKey);
+    res.locals.clerkPublishableKey = isNetlify ? null : (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY);
+    res.locals.clerkFrontendApi = isNetlify ? null : getClerkFrontendApi(res.locals.clerkPublishableKey);
     res.locals.auth = req.auth; // Available from clerkMiddleware
 
     // Determine protocol and host dynamically for canonical URLs
