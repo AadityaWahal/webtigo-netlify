@@ -419,6 +419,7 @@ app.post('/api/resize-image', upload.single('image'), async (req, res) => {
 
         const buffer = await sharp(req.file.buffer)
             .resize(width, height, { fit: 'cover' })
+            .jpeg({ quality: 90 })
             .toBuffer();
 
         const filename = `resized_${uuidv4()}.jpg`;
