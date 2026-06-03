@@ -6,6 +6,7 @@
 [functions]
   included_files = ["views/**", "seo/**"]
   node_bundler = "esbuild"
+  external_node_modules = ["ejs", "express-ejs-layouts"]
 
 [[redirects]]
   from = "/*"
