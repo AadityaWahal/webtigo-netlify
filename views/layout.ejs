@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="12uCiJpKQjiUNhJ1NcfriED4-pmNfedVJroRTKthng8">
+  <meta name="description"
+    content="<%= typeof description !== 'undefined' ? description : 'Webtigo provides free, premium web tools for PDF creation, image compression, text-to-speech, QR code generation. Fast, secure, and user-friendly.' %>">
+  <meta name="keywords"
+    content="<%= typeof keywords !== 'undefined' ? keywords : 'pdf tools, image compressor, qr code generator, online tools, free web tools' %>">
+  <meta name="author" content="Member of Mutivers (Aaditya Wahal)">
+  <link rel="icon" href="/logo.png" type="image/png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.vercel.app' %>/<%= typeof currentPath !== 'undefined' ? currentPath.replace(/^\//, '') : '' %>">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description"
+    content="<%= typeof description !== 'undefined' ? description : 'Free premium web tools for everyday tasks. PDF, Images, Audio, and Text utilities.' %>">
+  <meta property="og:image" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.vercel.app' %>/og-image.jpg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.vercel.app' %>/<%= typeof currentPath !== 'undefined' ? currentPath.replace(/^\//, '') : '' %>">
+  <meta property="twitter:title" content="<%= title %>">
+  <meta property="twitter:description"
+    content="<%= typeof description !== 'undefined' ? description : 'Free premium web tools for everyday tasks.' %>">
+
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="application-name" content="Webtigo">
+  <meta name="apple-mobile-web-app-title" content="Webtigo">
+  <link rel="canonical" href="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.vercel.app' %><%= typeof currentPath !== 'undefined' ? currentPath : '' %>">
+
+  <meta property="og:site_name" content="Webtigo">
+  <meta name="twitter:creator" content="@webtigo">
+  <meta name="twitter:image" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.vercel.app' %>/og-image.jpg">
+
+  <!-- Schema.org JSON-LD for Sitelinks -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "url": "https://webtigo.vercel.app/",
+        "name": "Webtigo",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://webtigo.vercel.app/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "Webtigo",
+        "url": "https://webtigo.vercel.app/",
+        "logo": "https://webtigo.vercel.app/logo.png",
+        "sameAs": [
+          "http://www.youtube.com/@Member_of_Multivers"
+        ]
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Text to Speech",
+        "url": "https://webtigo.vercel.app/tts"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Image Compressor",
+        "url": "https://webtigo.vercel.app/compressor"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "QR Code Generator",
+        "url": "https://webtigo.vercel.app/qrcode"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Premium Tools",
+        "url": "https://webtigo-premium.vercel.app/"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Blog",
+        "url": "https://webtigo.vercel.app/blog"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Social Media",
+        "url": "https://webtigo.vercel.app/social-media"
+      }
+    ]
+  }
+  </script>
+
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/globals.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Clerk Auth -->
+  <% if (typeof clerkFrontendApi !== 'undefined' && clerkFrontendApi) { %>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="<%= typeof clerkPublishableKey !== 'undefined' ? clerkPublishableKey : '' %>"
+    src="https://<%= clerkFrontendApi %>/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
+  <% } else { %>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="<%= typeof clerkPublishableKey !== 'undefined' ? clerkPublishableKey : '' %>"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
+  <% } %>
+
+</head>
+
+<body>
+  <div class="background-container">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <nav class="navbar">
+    <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+      <img src="/logo.png" alt="Webtigo Logo" style="height: 40px; width: auto;">
+      <span>Webtigo</span>
+    </div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="/social-media">Social Media</a>
+      <a href="https://webtigo-premium.vercel.app/" target="_blank" class="premium-link">Premium</a>
+      <a href="/signin" id="sign-in-btn" style="display: none;">Sign In</a>
+      <div id="user-button"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <!-- down side -->
+  <div class="ad-container"
+    style="max-width: 800px; min-width: 300px; min-height: 250px; margin: 2rem auto; text-align: center; padding: 0 1rem; overflow: hidden; display: block;">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8054743572805756"
+      crossorigin="anonymous"></script>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8054743572805756" data-ad-slot="8840405516"
+      data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
+  <footer>
+    <div style="margin-bottom: 1rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+      <a href="/about"
+        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
+        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">About Us</a>
+      <a href="/privacy"
+        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
+        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">Privacy Policy</a>
+      <a href="/terms"
+        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
+        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">Terms of Service</a>
+      <a href="/contact"
+        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
+        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">Contact Us</a>
+    </div>
+    
+    <div style="margin-bottom: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem;">
+      <a href="http://www.youtube.com/@Member_of_Multivers" target="_blank" style="display: flex; align-items: center; gap: 8px; color: #ff0000; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.342 1.12.33 3.466.33 3.466s.012 2.345-.33 3.465a2.01 2.01 0 0 1-1.415 1.42c-1.123.302-5.288.332-6.11.335h-.089c-.822-.003-4.987-.033-6.11-.335a2.01 2.01 0 0 1-1.415-1.42C.012 10.345.025 8 .025 8s-.012-2.345.33-3.465a2.01 2.01 0 0 1 1.415-1.42c1.123-.302 5.288-.332 6.11-.335zM6.658 5.435v4.13L10.203 7.5 6.658 5.435z"/>
+        </svg>
+        YouTube
+      </a>
+    </div>
+
+    <p>&copy; 2026 Member of Mutivers (Aaditya Wahal). All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Scroll Reveal Animation (Apple Style)
+    document.addEventListener("DOMContentLoaded", function () {
+      // 1. Enable JS animations only if JS loads
+      document.body.classList.add('js-enabled');
+
+      // 2. Fallback: If IntersectionObserver is not supported, reveal all immediately
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.tool-card').forEach(card => card.classList.add('reveal'));
+        return;
+      }
+
+      const observerIn = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal');
+            observerIn.unobserve(entry.target); // Performance: stop observing once revealed
+          }
+        });
+      }, { threshold: 0.1, rootMargin: "50px" }); // Increased margin to trigger earlier
+
+      const cards = document.querySelectorAll('.tool-card');
+      cards.forEach((card, index) => {
+        card.style.transitionDelay = `${index * 50}ms`; // Stagger effect
+        observerIn.observe(card);
+      });
+
+      // Safety net: Force reveal immediately for crawlers
+      setTimeout(() => {
+        cards.forEach(card => card.classList.add('reveal'));
+      }, 0);
+
+      // Initialize Clerk UI
+      const initClerk = async () => {
+        if (window.Clerk) {
+          try {
+            await window.Clerk.load();
+            const userButtonEl = document.getElementById('user-button');
+            const signInBtnEl = document.getElementById('sign-in-btn');
+
+            if (window.Clerk.user) {
+              if (userButtonEl) window.Clerk.mountUserButton(userButtonEl);
+              if (signInBtnEl) signInBtnEl.style.display = 'none';
+            } else {
+              if (signInBtnEl) signInBtnEl.style.display = 'block';
+            }
+          } catch (error) {
+            console.error('Error loading Clerk:', error);
+          }
+        }
+      };
+
+      // Check if Clerk is loaded, else wait
+      if (window.Clerk) {
+        initClerk();
+      } else {
+        const checkClerkInterval = setInterval(() => {
+          if (window.Clerk) {
+            clearInterval(checkClerkInterval);
+            initClerk();
+          }
+        }, 100);
+      }
+    });
+  </script>
+
+  <% if (typeof currentPath==='undefined' || (currentPath !=='/tts' && currentPath !=='/frequency' && currentPath
+    !=='/frequency-detector' ) ) { %>
+    <audio id="bg-music" loop>
+      <source src="/audio/background.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var audio = document.getElementById('bg-music');
+        if (audio) {
+          audio.volume = 0.5; // Set default volume to 50%
+
+          var playAttempt = setInterval(() => {
+            audio.play()
+              .then(() => {
+                clearInterval(playAttempt);
+              })
+              .catch(error => {
+                console.log('Audio autoplay prevented, waiting for interaction.');
+              });
+          }, 3000);
+
+          const unlockAudio = () => {
+            audio.play().then(() => {
+              clearInterval(playAttempt);
+              document.removeEventListener('click', unlockAudio);
+              document.removeEventListener('scroll', unlockAudio);
+              document.removeEventListener('keydown', unlockAudio);
+            }).catch(e => { });
+          };
+
+          document.addEventListener('click', unlockAudio);
+          document.addEventListener('scroll', unlockAudio);
+          document.addEventListener('keydown', unlockAudio);
+        }
+      });
+    </script>
+    <% } %>
+</body>
+
+</html>

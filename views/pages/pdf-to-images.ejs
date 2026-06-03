@@ -1,0 +1,150 @@
+<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Webtigo PDF to Images Converter",
+      "operatingSystem": "Any",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Extract all pages from your PDF as high-quality JPG images for free. Fast, private, and processes entirely in your browser."
+    }
+    </script>
+    <h1 style="text-align: center; margin-bottom: 2rem;">PDF to Images</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Extract all pages from your PDF as high-quality JPG images for <strong>free</strong>. Fast, private, and
+        processes entirely in your browser.
+    </p>
+
+    <div class="form-group">
+        <label>Select PDF File</label>
+        <input type="file" id="pdf-file" accept=".pdf">
+    </div>
+
+    <div class="info-box"
+        style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; font-size: 0.9rem;">
+        <p>This tool will extract all pages from your PDF and download them as a ZIP file containing high-quality
+            images. Processing happens entirely in your browser.</p>
+    </div>
+
+    <button class="primary-btn" onclick="convertPdfToImages()" id="convert-btn">Convert to Images</button>
+
+    <div id="progress-container" style="display: none; margin-top: 1rem; text-align: center;">
+        <p id="progress-text" style="margin-bottom: 0.5rem;">Processing...</p>
+        <div style="width: 100%; background: rgba(255,255,255,0.1); border-radius: 1rem; overflow: hidden;">
+            <div id="progress-bar"
+                style="width: 0%; height: 8px; background: var(--accent-color, #4facfe); transition: width 0.3s;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    async function convertPdfToImages() {
+        const fileInput = document.getElementById('pdf-file');
+        const btn = document.getElementById('convert-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+
+        if (fileInput.files.length === 0) return alert('Please select a PDF file first.');
+
+        const file = fileInput.files[0];
+
+        const originalText = btn.innerText;
+        btn.innerText = 'Extracting...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressText.innerText = 'Loading PDF...';
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            const totalPages = pdf.numPages;
+
+            const zip = new JSZip();
+
+            for (let i = 1; i <= totalPages; i++) {
+                progressText.innerText = `Processing page ${i} of ${totalPages}...`;
+                progressBar.style.width = `${(i / totalPages) * 100}%`;
+
+                const page = await pdf.getPage(i);
+
+                // Increase scale for better image quality
+                const scale = 2;
+                const viewport = page.getViewport({ scale: scale });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+
+                // Convert canvas to blob
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+                // Add to zip
+                zip.file(`page_${i}.png`, blob);
+            }
+
+            progressText.innerText = 'Zipping files...';
+
+            const zipContent = await zip.generateAsync({ type: 'blob' });
+
+            const url = URL.createObjectURL(zipContent);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `webtigo-extracted-${Date.now()}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            progressText.innerText = 'Done!';
+
+        } catch (err) {
+            console.error(err);
+            alert('Error processing PDF: ' + err.message);
+            progressContainer.style.display = 'none';
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            btn.style.opacity = '1';
+
+            setTimeout(() => {
+                progressContainer.style.display = 'none';
+            }, 3000);
+        }
+    }
+</script>
+
+<div class="glass-card" style="margin-top: 3rem; padding: 2rem; position: relative; text-align: center;">
+    <h2
+        style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+        Free Your Photos</h2>
+    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
+        Have you ever received a massive, 50-page PDF document just because you needed one single image trapped inside
+        it? Trying to screenshot a PDF usually results in a blurry, low-quality mess, and cropping it on your phone is
+        just frustrating. Our tool allows you to break down any PDF document and instantly save its pages as crisp,
+        high-quality image files.
+    </p>
+    <a href="/blog/pdf-to-images" class="secondary-btn"
+        style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+        Read Full Guide on our Blog
+    </a>
+</div>

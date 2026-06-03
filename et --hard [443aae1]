@@ -1,0 +1,141 @@
+[33m9fc6d6d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Add search bar for tools with real-time filtering
+[33mf96e546[m Add search bar for tools with real-time filtering
+[33m2236186[m Add search bar for tools with real-time filtering
+[33m443aae1[m Add search bar for tools with real-time filtering
+[33m34dae45[m Implement Liquid Glass UI with animated background and premium glassmorphism
+[33m2a4b748[m Add background audio file correctly
+[33mdf759e3[m Add background audio file
+[33m9fcde26[m Add background audio support with TTS exclusion logic
+[33m485d46a[m Remove Clerk authentication features
+[33m17075fc[m Fix Clerk key retrieval logic with hardcoded fallback
+[33m89a349b[m Revert Vercel config to use builds (fixes 404)
+[33m2a4c417[m Fix Vercel config: remove deprecated builds, use rewrites
+[33mcfe1b80[m Add ads.txt
+[33m72cbb33[m fix: Resolve Clerk Sign-In issues via robust env loading and layout fixes
+[33m3e51694[m Add Google AdSense script
+[33m06c91fc[m fix: Prioritize .env.local for Clerk keys and add debug logs
+[33m6e3a7be[m fix: Resolve Clerk Sign-In issues via robust env loading and layout fixes
+[33ma629515[m feat: Upgrade UI to Liquid Glass aesthetics
+[33ma8ad499[m fix: Resolve CSS specificity conflict hiding cards on Vercel
+[33m7c903cf[m fix: Improve scroll reveal reliability and no-js fallback
+[33m0e62e3e[m fix: Apply missing CSS for liquid background and glass theme
+[33m0a5536f[m feat: Add logo asset
+[33mc666451[m feat: Add logo and favicon to layout
+[33m239e89d[m feat: Update theme to light mode and improve SEO with dynamic meta tags
+[33mc46f584[m feat: Add PDF tools (Images to PDF, PDF to Images)
+[33mcbf31f6[m fix(auth): solve race condition in Clerk signin and support .env.local
+[33m9160015[m chore: Remove .env.example as per user request
+[33m682cfea[m docs: Add .env.example for Clerk configuration
+[33m35f1cff[m fix: Add Express redirects for legacy URLs (remove next.config.js)
+[33mc2e40c6[m feat: Add Next.js redirects for legacy URLs
+[33ma4b00c7[m Fix: Update Clerk API Keys and support NEXT_PUBLIC prefix
+[33m8dc0f99[m SEO: Update Google Site Verification tag
+[33mbd09a02[m SEO: Add JSON-LD for Sitelinks and extended meta tags. Fix package.json.
+[33ma596d63[m Refactor: Remove PDF Service and update Sitemap
+[33m53e9278[m Enhance: SEO Meta Tags and dynamic /sitemap.xml
+[33mb7551bd[m Fix: Final removal of fs-extra and cache clear
+[33m9cc1356[m Fix: Explicitly include 'views' and 'public' in Vercel build and set absolute paths in Express
+[33ma9670df[m Fix: Update sharp version and ensure clean install for Vercel Linux binaries
+[33m8011b47[m Fix: Remove fs-extra dependency to resolve Vercel crash. Use native Node fs.
+[33m48f8143[m Rebuild: Next.js-style Express + EJS App (Node 20.x)
+[33m62e413e[m Refactor: Restore monolithic backend and fix PDF split
+[33m0bd6636[m CRITICAL FIX: Restore app initialization in index.js
+[33m0c47b6a[m Fix Runtime Error: Replace fs-extra with native fs to fix Vercel bundling module error
+[33m062f950[m Retry Fix: Include public files in Vercel bundle
+[33m3b5b7ed[m Final cleanup: Downgrade Node to 20.x and remove test scripts
+[33m6720636[m Fix Vercel 404: Add explicit builds config to vercel.json
+[33mbf21ced[m Fix Vercel Binary Issue: Switch to Base64 JSON responses for QR, Compressor, and Resizer
+[33m197af4d[m Fix Frontend: Update PDF Service to handle JSON response (Base64) for Vercel compatibility
+[33m35c56b9[m Major Refactor: Modularized backend services (Image, PDF, QR, Text) for robustness and error-free execution
+[33m9708c40[m Fix syntax error: Wrap TTS script in <script> tags
+[33ma303f3c[m Complete Backend Redesign: Native Libraries only, In-Memory Processing, Zero External APIs
+[33m73ac1cb[m Rewrite TTS to use client-side Web Speech API (remove /speak endpoint)
+[33ma6c5e6a[m Manual trigger: Force update for deployment verification
+[33m0ae6fc5[m Remove debug logs and test scripts
+[33mf1cab16[m Cleanup code for Vercel deployment: remove legacy Next.js files and fix dependencies
+[33m0a1bff9[m improvenment
+[33mcf5df16[m improvenment
+[33m0a00928[m improvenment
+[33m3e63278[m improvenment
+[33mc2c3b9a[m improvenment
+[33mf8f19cc[m improvenment
+[33m1184d4f[m improvenment
+[33mba2fce9[m improvenment
+[33mf493ae3[m improvenment
+[33md104e60[m improvenment
+[33m10edf48[m improvenment
+[33mbe5d85f[m improvenment
+[33m5e4a30c[m improvenment
+[33m1d0fbe8[m improvenment
+[33mfe68cda[m improvenment
+[33mc0b101c[m improvenment
+[33mef23c72[m improvenment
+[33m83ecbd2[m improvenment
+[33m0103a0a[m improvenment
+[33m9d4d940[m improvenment
+[33m60fe5dd[m improvenment
+[33med58dd8[m improvenment
+[33m2846b01[m improvenment
+[33m932be8a[m Fixed corrupted home screen
+[33m731bf8f[m Fixed corrupted home screen
+[33mbb58a23[m Add new URL entry to sitemap.xml
+[33mb4c90f3[m Change Premium link to external URL with attributes
+[33m8790dbd[m Update Premium link in index.html
+[33m4613cb0[m Update index.html
+[33mcb50863[m Update index.html
+[33m369e149[m Update index.html
+[33m1bce3f1[m Update index.html
+[33m9a08d15[m Improve SEO and meta tags for frequency generator page
+[33m0e227d5[m Improve SEO and meta tags for frequency generator page
+[33m2c9f1d8[m Improve SEO and meta tags for frequency generator page
+[33meb38660[m Improve SEO and meta tags for frequency generator page
+[33meb11971[m Improve SEO and meta tags for frequency generator page
+[33m3fb5665[m Improve SEO and meta tags for frequency generator page
+[33m717e010[m Improve SEO and meta tags for frequency generator page
+[33m7f91e99[m Improve SEO and meta tags for frequency generator page
+[33m2814dc1[m Improve SEO and meta tags for frequency generator page
+[33mad04fb6[m updated homepage design
+[33m4e02150[m updated homepage design
+[33m766353f[m updated homepage design
+[33mae9eea4[m updated homepage design
+[33m2656b52[m updated homepage design
+[33m7e4dbc3[m updated homepage design
+[33meb3fca5[m updated homepage design
+[33m0225c17[m updated homepage design
+[33m297491c[m updated homepage design
+[33m6098ff4[m updated homepage design
+[33mdc78b81[m updated homepage design
+[33mb071011[m updated homepage design
+[33m7801e8f[m Update: Beautify layout and design
+[33m0189448[m Update: Beautify layout and design
+[33m90dd0b7[m Update: Beautify layout and design
+[33m5858020[m Update: Beautify layout and design
+[33me51432e[m Update: Beautify layout and design
+[33m3b49e53[m Update: Beautify layout and design
+[33m27981f1[m Update: Beautify layout and design
+[33m3603157[m Update: Beautify layout and design
+[33mf252ec4[m Update: Beautify layout and design
+[33m1bfaf92[m Update: Beautify layout and design
+[33mb21c8a5[m Update: Beautify layout and design
+[33m5670fa0[m Update: Beautify layout and design
+[33m5b5af87[m Update: Beautify layout and design
+[33m5f3b5f2[m Update: Beautify layout and design
+[33m00a98ca[m Update: Beautify layout and design
+[33m4d8ee35[m Update: Beautify layout and design
+[33mae0b89e[m Update: Beautify layout and design
+[33m83d108d[m Update: Beautify layout and design
+[33m12b9221[m {commit_message}
+[33m8deb581[m Fix: Handle binary response for image compressor
+[33mdea2f24[m Fix: Handle binary response for image compressor
+[33mf7c6db1[m Fix: Handle binary response for image compressor
+[33m4a62cb9[m Fix: Handle binary response for image compressor
+[33m8570af8[m Fix: Handle binary response for image compressor
+[33m5816a61[m Fix: Hybrid static and Express routing for Vercel
+[33m39c0c34[m ✅ Unified routing via Express (vercel.json fixed)
+[33maf3eacc[m Fix Vercel routing and Express entry point
+[33me235eca[m Fix Vercel routing and Express entry point
+[33m587f965[m Fix Vercel routing and Express entry point
+[33m7a70e0b[m Fix Vercel routing and Express entry point
+[33mfa50fbb[m Fix: use /tmp for runtime writes (Vercel compatible)
+[33mb8dfc82[m Fix: use /tmp for runtime writes (Vercel compatible)
+[33m8539562[m Fix: use /tmp for runtime writes (Verc

@@ -1,0 +1,148 @@
+<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Webtigo Text to Speech",
+      "operatingSystem": "Any",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Convert text into natural-sounding speech for free. Support for English, French, Spanish, and German accents."
+    }
+    </script>
+    <h1 style="margin-bottom: 2rem; text-align: center;">Text to Speech</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Convert your text into natural-sounding speech for <strong>free</strong>. Download AI-generated audio as an MP3
+        file instantly.
+    </p>
+
+    <div class="form-group">
+        <label>Enter Text</label>
+        <textarea id="tts-text" rows="5" placeholder="Type something here..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Accent / Language</label>
+        <select id="tts-accent">
+            <option value="en">English (US)</option>
+            <option value="en-uk">English (UK)</option>
+            <option value="en-au">English (Australia)</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Speed</label>
+        <select id="tts-speed">
+            <option value="normal">Normal</option>
+            <option value="slow">Slow</option>
+        </select>
+    </div>
+
+    <button class="primary-btn" onclick="generateSpeech()">Generate Audio</button>
+
+    <div id="result" class="result-area" style="display: none;">
+        <audio id="audio-player" controls style="width: 100%; margin-bottom: 1rem;"></audio>
+        <a id="download-link" href="#" class="primary-btn"
+            style="text-decoration: none; display: inline-block;">Download MP3</a>
+    </div>
+</div>
+
+<script>
+    async function generateSpeech() {
+        const text = document.getElementById('tts-text').value;
+        const accent = document.getElementById('tts-accent').value;
+        const speed = document.getElementById('tts-speed').value;
+        const resultDiv = document.getElementById('result');
+
+        if (!text) return alert('Please enter text');
+
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('accent', accent);
+        formData.append('speed', speed);
+
+        try {
+            const res = await fetch('/api/speak', { method: 'POST', body: formData });
+            if (!res.ok) throw new Error('Generation failed');
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+
+            const audio = document.getElementById('audio-player');
+            audio.src = url;
+            audio.play();
+
+            const link = document.getElementById('download-link');
+            link.href = url;
+            link.download = `speech-${Date.now()}.mp3`;
+
+            resultDiv.style.display = 'block';
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    // Auto-populate from URL (e.g. from Blog)
+    window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has('text')) {
+            document.getElementById('tts-text').value = decodeURIComponent(params.get('text'));
+        }
+
+        if (params.has('accent')) {
+            const select = document.getElementById('tts-accent');
+            const val = params.get('accent');
+            // ensure value exists in options before setting
+            if (Array.from(select.options).some(opt => opt.value === val)) {
+                select.value = val;
+            }
+        }
+
+        if (params.get('auto') === 'true') {
+            // Slight delay so the UI fully loads before playing
+            setTimeout(() => {
+                generateSpeech();
+            }, 300);
+        }
+    });
+</script>
+
+<section class="glass-card" style="margin-top: 3rem; padding: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h2 style="color: white; margin-bottom: 2rem; font-size: 2rem; text-align: center; background: linear-gradient(135deg, white, var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">Text to Speech: Tips & FAQ</h2>
+    
+    <div style="display: grid; gap: 2rem; text-align: left;">
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">How do I get the best AI voice?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">For the most natural results, use appropriate punctuation. Commas create brief pauses, while periods create longer ones. You can also try phonetic spelling if the AI is mispronouncing a specific word or brand name.</p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Can I use this for YouTube or Podcasting?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Absolutely. Our generated MP3 files are high-quality and can be used in your video editing software or as voiceovers for presentations. Check the "Premium" section if you need even more advanced voice customization.</p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Supported languages</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Currently, Webtigo supports English (US, UK, AU), French, Spanish, and German. We are constantly updating our model to include more regional accents and languages based on user demand.</p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Commercial usage limits</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">The Webtigo free tier allows you to generate speech for personal and educational use. For unlimited high-volume commercial usage, please reach out to us via the contact page or check out the premium dashboard.</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem; padding: 2.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center;">
+        <h3 style="color: white; margin-bottom: 1rem;">Mastering AI Voices</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Learn the hidden punctuation tricks that make AI sound human in our deep-dive blog guide.</p>
+        <a href="/blog/tts" class="primary-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 0.75rem 2rem;">Read TTS Masterclass</a>
+    </div>
+</section>

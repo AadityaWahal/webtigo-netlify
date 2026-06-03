@@ -1,0 +1,238 @@
+<div class="glass-card" style="max-width: 800px; margin: 0 auto;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Webtigo Images to PDF Converter",
+      "operatingSystem": "Any",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Convert and merge multiple JPG or PNG images into a single PDF document for free."
+    }
+    </script>
+    <h1 style="text-align: center; margin-bottom: 2rem;">Images to PDF</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Merge multiple JPG or PNG images into a single PDF document for <strong>free</strong>. Combine your photos
+        easily and securely.
+    </p>
+
+    <div class="drop-zone" id="drop-zone"
+        style="border: 2px dashed rgba(255,255,255,0.2); padding: 3rem; text-align: center; border-radius: 1rem; cursor: pointer; transition: all 0.3s ease;">
+        <p style="margin-bottom: 1rem; font-size: 1.2rem;">Drag & Drop images here or Click to Browse</p>
+        <span style="font-size: 0.9rem; opacity: 0.7;">Supports JPG, PNG</span>
+        <input type="file" id="file-input" multiple accept="image/png, image/jpeg, image/jpg" style="display: none;">
+    </div>
+
+    <div id="file-list-container" style="margin-top: 2rem;">
+        <ul id="file-list" style="list-style: none; padding: 0;">
+            <!-- File items will be added here -->
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <button class="primary-btn" onclick="convertToPdf()" id="convert-btn" disabled
+            style="opacity: 0.5; cursor: not-allowed;">Convert to PDF</button>
+    </div>
+</div>
+
+<style>
+    .file-item {
+        background: rgba(255, 255, 255, 0.05);
+        margin-bottom: 0.5rem;
+        padding: 0.8rem;
+        border-radius: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .file-name {
+        font-size: 0.9rem;
+    }
+
+    .file-actions button {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0 0.5rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .file-actions button:hover {
+        opacity: 1;
+        color: var(--accent-color, #4facfe);
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+        border-color: var(--accent-color, #4facfe);
+        background: rgba(255, 255, 255, 0.05);
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<script>
+    let selectedFiles = [];
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const convertBtn = document.getElementById('convert-btn');
+
+    // Drag & Drop Handlers
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+    function handleFiles(files) {
+        const validFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+        if (validFiles.length === 0) return;
+
+        selectedFiles = [...selectedFiles, ...validFiles];
+        renderFileList();
+    }
+
+    function renderFileList() {
+        fileList.innerHTML = '';
+        selectedFiles.forEach((file, index) => {
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            li.innerHTML = `
+                <div class="file-info">
+                   <span style="font-weight: bold; opacity: 0.5;">${index + 1}.</span>
+                   <span class="file-name">${file.name}</span>
+                </div>
+                <div class="file-actions">
+                    <button onclick="moveFile(${index}, -1)" title="Move Up">↑</button>
+                    <button onclick="moveFile(${index}, 1)" title="Move Down">↓</button>
+                    <button onclick="removeFile(${index})" title="Remove" style="color: #ff6b6b;">×</button>
+                </div>
+            `;
+            fileList.appendChild(li);
+        });
+
+        updateButtonState();
+    }
+
+    window.moveFile = (index, direction) => {
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= selectedFiles.length) return;
+
+        [selectedFiles[index], selectedFiles[newIndex]] = [selectedFiles[newIndex], selectedFiles[index]];
+        renderFileList();
+    };
+
+    window.removeFile = (index) => {
+        selectedFiles.splice(index, 1);
+        renderFileList();
+    };
+
+    function updateButtonState() {
+        if (selectedFiles.length > 0) {
+            convertBtn.disabled = false;
+            convertBtn.style.opacity = '1';
+            convertBtn.style.cursor = 'pointer';
+        } else {
+            convertBtn.disabled = true;
+            convertBtn.style.opacity = '0.5';
+            convertBtn.style.cursor = 'not-allowed';
+        }
+    }
+
+    window.convertToPdf = async () => {
+        if (selectedFiles.length === 0) return;
+
+        const originalText = convertBtn.innerText;
+        convertBtn.innerText = 'Converting...';
+        convertBtn.disabled = true;
+
+        try {
+            const { PDFDocument } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+
+            for (const file of selectedFiles) {
+                const arrayBuffer = await file.arrayBuffer();
+                let image;
+
+                if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+                    image = await pdfDoc.embedJpg(arrayBuffer);
+                } else if (file.type === 'image/png') {
+                    image = await pdfDoc.embedPng(arrayBuffer);
+                } else {
+                    continue; // Skip unsupported
+                }
+
+                // Get dimensions and add page
+                const { width, height } = image.scale(1);
+                const page = pdfDoc.addPage([width, height]);
+                page.drawImage(image, {
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: height,
+                });
+            }
+
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `webtigo-images-${Date.now()}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+        } catch (err) {
+            console.error(err);
+            alert('Error converting images: ' + err.message);
+        } finally {
+            convertBtn.innerText = originalText;
+            convertBtn.disabled = false;
+        }
+    };
+</script>
+
+<div class="glass-card" style="margin-top: 3rem; padding: 2rem; position: relative; text-align: center;">
+    <h2
+        style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+        From Cluttered Gallery to Perfect Document</h2>
+    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
+        If you have ever tried to email someone a batch of photos—only to have them arrive completely out of order,
+        upside down, or rejected because the file sizes were too large—you already know how frustrating image sharing
+        can be. Our tool takes the chaos of your photo gallery and instantly binds those images into a single, neat,
+        easily shareable PDF document.
+    </p>
+    <a href="/blog/images-to-pdf" class="secondary-btn"
+        style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+        Read Full Guide on our Blog
+    </a>
+</div>

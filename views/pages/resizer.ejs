@@ -1,0 +1,142 @@
+<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Webtigo Image Resizer",
+      "operatingSystem": "Any",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Resize your images online to exact pixel dimensions for free. Perfect for social media, passports, and website optimization."
+    }
+    </script>
+    <h1 style="margin-bottom: 2rem; text-align: center;">Image Resizer</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Resize your images online to exact pixel dimensions for <strong>free</strong>. Perfect for social media,
+        passports, and website optimization.
+    </p>
+
+    <div class="form-group">
+        <label>Upload Image</label>
+        <input type="file" id="res-file" accept="image/*">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 2rem;">
+        <label>Common Presets (Cheat Sheet)</label>
+        <select id="res-preset" onchange="applyPreset()"
+            style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; outline: none; transition: border-color 0.3s; font-family: inherit;">
+            <option value="">-- Select a Preset Dimension --</option>
+            <optgroup label="Content Creation (16:9)">
+                <option value="1280,720">YouTube Thumbnail (1280 x 720)</option>
+                <option value="2560,1440">YouTube Channel Banner (2560 x 1440)</option>
+                <option value="1920,1080">Standard HD Video (1920 x 1080)</option>
+            </optgroup>
+            <optgroup label="Social Media">
+                <option value="1080,1080">Instagram Square (1080 x 1080)</option>
+                <option value="1080,1350">Instagram Portrait (1080 x 1350)</option>
+                <option value="1080,1920">Instagram/WhatsApp Story (1080 x 1920)</option>
+                <option value="1500,500">X / Twitter Header (1500 x 500)</option>
+            </optgroup>
+            <optgroup label="Official Docs / Profile Pics">
+                <option value="413,531">Standard Digital Passport Photo (413 x 531)</option>
+                <option value="256,64">Digital Signature (256 x 64)</option>
+                <option value="256,256">Twitch / Standard Profile Base (256 x 256)</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div style="display: flex; gap: 1rem;">
+        <div class="form-group" style="flex: 1;">
+            <label>Width (px)</label>
+            <input type="number" id="res-width" value="300">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>Height (px)</label>
+            <input type="number" id="res-height" value="300">
+        </div>
+    </div>
+
+    <button class="primary-btn" onclick="resizeImage()">Resize</button>
+
+    <div id="result" class="result-area" style="display: none;">
+        <a id="download-link" href="#" class="primary-btn"
+            style="text-decoration: none; display: inline-block;">Download Resized Image</a>
+    </div>
+</div>
+
+<script>
+    async function resizeImage() {
+        const file = document.getElementById('res-file').files[0];
+        const width = document.getElementById('res-width').value;
+        const height = document.getElementById('res-height').value;
+
+        if (!file) return alert('Select image');
+
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('width', width);
+        formData.append('height', height);
+
+        try {
+            const res = await fetch('/api/resize-image', { method: 'POST', body: formData });
+            if (!res.ok) throw new Error('Failed');
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.getElementById('download-link');
+            link.href = url;
+            link.download = `resized-${Date.now()}.jpg`;
+            document.getElementById('result').style.display = 'block';
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function applyPreset() {
+        const val = document.getElementById('res-preset').value;
+        if (val) {
+            const [w, h] = val.split(',');
+            document.getElementById('res-width').value = w;
+            document.getElementById('res-height').value = h;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        let updated = false;
+        if (params.has('w')) {
+            document.getElementById('res-width').value = params.get('w');
+            updated = true;
+        }
+        if (params.has('h')) {
+            document.getElementById('res-height').value = params.get('h');
+            updated = true;
+        }
+
+        if (updated && document.getElementById('res-file').files && document.getElementById('res-file').files.length > 0 && params.get('auto') === 'true') {
+            setTimeout(resizeImage, 100);
+        }
+    });
+</script>
+
+<div class="glass-card"
+    style="margin-top: 3rem; padding: 2rem; position: relative; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h2
+        style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+        Pixel Perfect Every Time</h2>
+    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
+        We have all been there. You try to upload a fantastic new profile picture, and the website forcefully crops out
+        half of your face. You try to set a desktop background, and it stretches out, making everything look wide and
+        distorted. Or, you try to upload a YouTube thumbnail, and the site flat-out rejects it for being the wrong
+        dimensions...
+    </p>
+    <a href="/blog/resizer" class="secondary-btn"
+        style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+        Read Full Guide on our Blog
+    </a>
+</div>

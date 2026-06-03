@@ -1,0 +1,32 @@
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    <div id="sign-in-mount"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const initSignIn = async () => {
+            try {
+                // Ensure Clerk is loaded if it hasn't been completely loaded by layout
+                await window.Clerk.load();
+
+                const signInDiv = document.getElementById('sign-in-mount');
+                if (signInDiv) {
+                    window.Clerk.mountSignIn(signInDiv, { routing: 'hash', forceRedirectUrl: '/' });
+                }
+            } catch (err) {
+                console.error("Error mounting Clerk sign in", err);
+            }
+        };
+
+        if (window.Clerk) {
+            initSignIn();
+        } else {
+            const checkClerkInterval = setInterval(() => {
+                if (window.Clerk) {
+                    clearInterval(checkClerkInterval);
+                    initSignIn();
+                }
+            }, 100);
+        }
+    });
+</script>

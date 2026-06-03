@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://webtigo.vercel.app/</loc><priority>1.00</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  
+  <url><loc>https://webtigo.vercel.app/compressor</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/resizer</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/images-to-pdf</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/pdf-to-images</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/tts</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/qrcode</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/frequency</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/frequency-detector</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/case-converter</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
+
+  <url><loc>https://webtigo.vercel.app/blog/compressor</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/resizer</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/images-to-pdf</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/pdf-to-images</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/tts</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/qrcode</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/frequency-generator</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/frequency-detector</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/case-converter</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/blog/somi-wahal</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+
+  <url><loc>https://webtigo.vercel.app/about</loc><priority>0.60</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/contact</loc><priority>0.60</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/social-media</loc><priority>0.60</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/my-channel</loc><priority>0.60</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/collaborators</loc><priority>0.60</priority><changefreq>yearly</changefreq></url>
+  
+  <url><loc>https://webtigo.vercel.app/signin</loc><priority>0.50</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/privacy</loc><priority>0.30</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://webtigo.vercel.app/terms</loc><priority>0.30</priority><changefreq>yearly</changefreq></url>
+</urlset>

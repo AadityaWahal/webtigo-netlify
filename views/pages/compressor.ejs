@@ -1,0 +1,102 @@
+<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Webtigo Image Compressor",
+      "operatingSystem": "Any",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Compress JPG, PNG, and WebP images online for free. Reduce file size instantly without losing visible quality."
+    }
+    </script>
+    <h1 style="margin-bottom: 2rem; text-align: center;">Image Compressor</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Easily compress your JPG, PNG, and WebP images online for <strong>free</strong>. Reduce file size instantly
+        without losing visible quality.
+    </p>
+
+    <div class="form-group">
+        <label>Select Image</label>
+        <input type="file" id="comp-file" accept="image/*">
+    </div>
+
+    <div class="form-group">
+        <label>Target Size (KB)</label>
+        <input type="number" id="comp-size" value="100" min="10">
+    </div>
+
+    <button class="primary-btn" onclick="compressImage()">Compress</button>
+
+    <div id="result" class="result-area" style="display: none;">
+        <p style="margin-bottom: 1rem;">Compression Complete!</p>
+        <a id="download-link" href="#" class="primary-btn"
+            style="text-decoration: none; display: inline-block;">Download Image</a>
+    </div>
+</div>
+
+<script>
+    async function compressImage() {
+        const fileInput = document.getElementById('comp-file');
+        const sizeInput = document.getElementById('comp-size');
+        const resultDiv = document.getElementById('result');
+
+        if (fileInput.files.length === 0) return alert('Select an image');
+
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+        formData.append('size_kb', sizeInput.value);
+
+        try {
+            const res = await fetch('/api/compress-image', { method: 'POST', body: formData });
+            if (!res.ok) throw new Error('Compression failed');
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.getElementById('download-link');
+            link.href = url;
+            link.download = `compressed-${Date.now()}.jpg`;
+
+            resultDiv.style.display = 'block';
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+</script>
+
+<section class="glass-card" style="margin-top: 3rem; padding: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h2 style="color: white; margin-bottom: 2rem; font-size: 2rem; text-align: center; background: linear-gradient(135deg, white, var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">How It Works & FAQ</h2>
+    
+    <div style="display: grid; gap: 2rem; text-align: left;">
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">What is image compression?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Image compression is the process of reducing the file size of an image without significantly degrading its visual quality. Webtigo uses "lossy" compression which removes microscopic details that the human eye can't easily see, resulting in much smaller files.</p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Why should I use Webtigo Compressor?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Most websites and email attachments have file size limits. A raw photo from your phone can be 8MB, while Webtigo can often shrink it to under 200KB. This speeds up your website, saves mobile data, and clears up cloud storage.</p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Is it secure?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Yes. We use advanced serverless technology. Your files are processed in a temporary cloud instance and are never stored on a persistent database. As soon as you download your file, it's purged from our systems.</p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Supporting multiple formats</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">We support JPG, PNG, and WebP. Note that PNG compression is generally less aggressive than JPG, as PNG is a lossless format by nature. Webtigo ensures your transparency is preserved where supported.</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem; padding: 2.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center;">
+        <h3 style="color: white; margin-bottom: 1rem;">Need more detail?</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Check out our comprehensive guide on the science of online image optimization and metadata stripping.</p>
+        <a href="/blog/compressor" class="primary-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 0.75rem 2rem;">Read Full Blog Guide</a>
+    </div>
+</section>

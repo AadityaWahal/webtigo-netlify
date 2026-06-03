@@ -1,0 +1,26 @@
+{
+    "version": 2,
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/api/index.js"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "index, follow"
+                }
+            ]
+        }
+    ],
+    "functions": {
+        "api/index.js": {
+            "includeFiles": "views/**,public/**,seo/**,node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs",
+            "maxDuration": 60
+        }
+    }
+}

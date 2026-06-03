@@ -1,0 +1,126 @@
+<div class="glass-card" style="max-width: 800px; margin: 0 auto;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Webtigo Case Converter",
+      "operatingSystem": "Any",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Instantly convert text between Uppercase, Lowercase, Title Case, and Sentence Case. Copy to clipboard with one click."
+    }
+    </script>
+    <h1 style="margin-bottom: 2rem; text-align: center;">Case Converter</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        A <strong>free</strong> and instant text tool to convert your text between uppercase, lowercase, title case, and
+        sentence case.
+    </p>
+
+    <div class="form-group">
+        <textarea id="case-text" rows="8" placeholder="Type or paste your text here..."
+            oninput="updateStats()"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+        <button class="primary-btn" style="width: auto;" onclick="convert('upper')">UPPERCASE</button>
+        <button class="primary-btn" style="width: auto;" onclick="convert('lower')">lowercase</button>
+        <button class="primary-btn" style="width: auto;" onclick="convert('title')">Title Case</button>
+        <button class="primary-btn" style="width: auto;" onclick="convert('sentence')">Sentence case</button>
+        <button class="primary-btn" style="width: auto;" onclick="convert('alternating')">aLtErNaTiNg cAsE</button>
+        <button class="primary-btn" style="width: auto;" onclick="convert('camel')">camelCase</button>
+        <button class="primary-btn" style="width: auto;" onclick="convert('snake')">snake_case</button>
+        <button class="primary-btn" style="width: auto; background: #ef4444;" onclick="copyText()">Copy Text</button>
+        <button class="primary-btn" style="width: auto; background: transparent; border: 1px solid var(--border);"
+            onclick="clearText()">Clear</button>
+    </div>
+
+    <div style="color: var(--text-muted); font-size: 0.9rem;">
+        Characters: <span id="char-count">0</span> | Words: <span id="word-count">0</span>
+    </div>
+</div>
+
+<script>
+    function convert(type) {
+        const textArea = document.getElementById('case-text');
+        let text = textArea.value;
+
+        switch (type) {
+            case 'upper':
+                text = text.toUpperCase();
+                break;
+            case 'lower':
+                text = text.toLowerCase();
+                break;
+            case 'title':
+                text = text.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                break;
+            case 'sentence':
+                text = text.toLowerCase().replace(/(^\s*\w|[\.\!\?]\s*\w)/g, c => c.toUpperCase());
+                break;
+            case 'alternating':
+                text = text.split('').map((c, i) => i % 2 === 0 ? c.toLowerCase() : c.toUpperCase()).join('');
+                break;
+            case 'camel':
+                text = text.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+                break;
+            case 'snake':
+                text = text.toLowerCase().replace(/\s+/g, '_').replace(/[^\w]/g, '');
+                break;
+        }
+        textArea.value = text;
+    }
+
+    function updateStats() {
+        const text = document.getElementById('case-text').value;
+        document.getElementById('char-count').innerText = text.length;
+        document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    }
+
+    function copyText() {
+        const text = document.getElementById('case-text');
+        text.select();
+        document.execCommand('copy');
+        alert('Copied to clipboard!');
+    }
+
+    function clearText() {
+        document.getElementById('case-text').value = '';
+        updateStats();
+    }
+
+    // Handle URL parameters
+    window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const text = params.get('text');
+        const caseType = params.get('case');
+
+        if (text) {
+            document.getElementById('case-text').value = decodeURIComponent(text);
+            updateStats();
+            if (caseType) {
+                convert(caseType);
+            }
+        }
+    });
+</script>
+
+<div class="glass-card"
+    style="margin-top: 3rem; padding: 2rem; position: relative; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h2
+        style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+        Master Your Text</h2>
+    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
+        Have you ever accidentally typed an entire, massive paragraph only to realize your "Caps Lock" key was turned on
+        the whole time? Or maybe you are trying to write a professional title for a YouTube video, but you aren't sure
+        which words are supposed to be capitalized. Retyping everything from scratch is incredibly frustrating and a
+        massive waste of time. Our Case Converter is the ultimate shortcut...
+    </p>
+    <a href="/blog/case-converter" class="secondary-btn"
+        style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+        Read Full Guide on our Blog
+    </a>
+</div>

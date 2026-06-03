@@ -1,0 +1,114 @@
+<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+    <h1 style="margin-bottom: 2rem; text-align: center;">Frequency Generator</h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Generate pure tone frequencies from 20Hz to 20,000Hz online for <strong>free</strong>. Test your speakers,
+        headphones, or hearing.<br><br>
+        Need to detect a frequency instead? Try the <a href="/frequency-detector"
+            style="color: var(--primary); text-decoration: underline;">Frequency Detector</a>.
+    </p>
+
+    <div class="form-group">
+        <label>Frequency (Hz)</label>
+        <input type="number" id="freq-val" value="440" min="1" max="24000" oninput="updateFreq(this.value)">
+        <input type="range" id="freq-slider" min="1" max="24000" value="440" oninput="updateFreq(this.value)"
+            style="width: 100%; margin-top: 1rem;">
+    </div>
+
+    <div class="form-group">
+        <label>Wave Type</label>
+        <select id="wave-type" onchange="updateType(this.value)">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+        </select>
+    </div>
+
+    <button id="toggle-btn" class="primary-btn" onclick="toggleOscillator()">Start</button>
+</div>
+
+<script>
+    let audioCtx;
+    let oscillator;
+    let isPlaying = false;
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function toggleOscillator() {
+        initAudio();
+        const btn = document.getElementById('toggle-btn');
+
+        if (isPlaying) {
+            oscillator.stop();
+            oscillator.disconnect();
+            isPlaying = false;
+            btn.innerText = "Start";
+            btn.style.background = "var(--primary)";
+        } else {
+            oscillator = audioCtx.createOscillator();
+            oscillator.type = document.getElementById('wave-type').value;
+            oscillator.frequency.value = document.getElementById('freq-val').value;
+            oscillator.connect(audioCtx.destination);
+            oscillator.start();
+            isPlaying = true;
+            btn.innerText = "Stop";
+            btn.style.background = "#ef4444";
+        }
+    }
+
+    function updateFreq(val) {
+        document.getElementById('freq-val').value = val;
+        document.getElementById('freq-slider').value = val;
+        if (oscillator && isPlaying) {
+            oscillator.frequency.value = val;
+        }
+    }
+
+    function updateType(type) {
+        if (oscillator && isPlaying) {
+            oscillator.type = type;
+        }
+    }
+
+    function playFreqLink(hz) {
+        document.getElementById('freq-val').value = hz;
+        document.getElementById('freq-slider').value = hz;
+        if (oscillator && isPlaying) {
+            oscillator.frequency.value = hz;
+        } else {
+            toggleOscillator();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const hzParam = params.get('hz');
+
+        if (hzParam) {
+            const hz = parseInt(hzParam, 10);
+            if (!isNaN(hz) && hz >= 1 && hz <= 24000) {
+                // Update Inputs
+                document.getElementById('freq-val').value = hz;
+                document.getElementById('freq-slider').value = hz;
+
+                // Auto Start
+                setTimeout(() => {
+                    toggleOscillator();
+                }, 500); // Slight delay for UI to settle
+            }
+        }
+    });
+</script>
+
+<div class="glass-card" style="max-width: 800px; margin: 3rem auto; padding: 2rem; position: relative; text-align: center;">
+    <h2 style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">The Ultimate Guide to Sound Frequencies</h2>
+    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
+        Welcome to Webtigo! If you are using our Frequency Generator and Frequency Detector tools, you are already tapping into the invisible waves that shape our world. Sound is much more than just what we hear—it is a physical force that can shatter objects, repel animals, and even guide our brains into states of deep relaxation.
+    </p>
+    <a href="/blog/frequency-generator" class="secondary-btn" style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+        Read Full Guide on our Blog
+    </a>
+</div>

@@ -1,0 +1,314 @@
+<style>
+    .mode-btn {
+        flex: 1;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+    .mode-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+</style>
+
+<div class="glass-card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <h1 style="margin-bottom: 2rem;">Frequency Detector</h1>
+    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.05rem;">
+        Detect real-time or constant audio frequencies using your microphone.
+        <br>Looking to generate a tone? <a href="/frequency"
+            style="color: var(--primary); text-decoration: underline;">Tone Generator</a>
+    </p>
+
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+        <button id="tab-realtime" class="mode-btn active" onclick="setMode('realtime')">Real-Time</button>
+        <button id="tab-constant" class="mode-btn" onclick="setMode('constant')">Constant</button>
+    </div>
+
+    <div id="detection-area"
+        style="min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;">
+        <div id="freq-display"
+            style="font-size: 4rem; font-weight: bold; color: var(--primary); margin-bottom: 0.5rem; text-shadow: 0 0 20px rgba(59, 130, 246, 0.4); font-variant-numeric: tabular-nums;">
+            -- Hz</div>
+        <div id="note-display" style="font-size: 1.5rem; color: rgba(255,255,255,0.8); margin-bottom: 1rem;">Note: --
+        </div>
+        <div id="status-text" style="font-size: 0.9rem; color: #ef4444; min-height: 1.2rem; margin-bottom: 1rem;"></div>
+
+        <div id="constant-loading"
+            style="display: none; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; color: var(--primary);">
+            <div class="spinner"
+                style="width: 20px; height: 20px; border: 3px solid rgba(59, 130, 246, 0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;">
+            </div>
+            <span>Recording audio...</span>
+        </div>
+
+        <div id="playback-container" style="display: none; margin-top: 1rem; width: 100%;">
+            <hr style="border-color: rgba(255,255,255,0.1); margin-bottom: 1rem;">
+            <p style="color: var(--primary); font-weight: bold; margin-bottom: 1rem;">Average Frequency Calculated!</p>
+            <a id="playback-link" href="/frequency" class="secondary-btn"
+                style="text-decoration: none; display: block; width: 100%; box-sizing: border-box; text-align: center; background: #10b981; color: white; border-color: #10b981; padding: 0.75rem;">▶
+                Play Detected Tone in Generator</a>
+        </div>
+    </div>
+
+    <button id="start-btn" class="primary-btn" onclick="toggleDetection()"
+        style="width: 100%; font-size: 1.1rem; padding: 1rem;">Start Listening</button>
+</div>
+
+<script>
+    let audioCtx = null;
+    let analyser = null;
+    let microphone = null;
+    let isListening = false;
+    let animationId = null;
+
+    // State
+    let currentMode = 'realtime'; // 'realtime' or 'constant'
+
+    // Constant detection vars
+    let freqHistory = []; // Store all valid frequencies during the session
+    let isRecordingConstant = false;
+    let finalConstantResult = 0;
+
+    const noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+    function noteFromPitch(frequency) {
+        let noteNum = 12 * (Math.log(frequency / 440) / Math.log(2));
+        return Math.round(noteNum) + 69;
+    }
+
+    function frequencyFromNoteNumber(note) {
+        return 440 * Math.pow(2, (note - 69) / 12);
+    }
+
+    function centsOffFromPitch(frequency, note) {
+        return Math.floor(1200 * Math.log(frequency / frequencyFromNoteNumber(note)) / Math.log(2));
+    }
+
+    // Standard auto-correlation pitch detection
+    function autoCorrelate(buf, sampleRate) {
+        let SIZE = buf.length;
+        let rms = 0;
+
+        for (let i = 0; i < SIZE; i++) {
+            let val = buf[i];
+            rms += val * val;
+        }
+        rms = Math.sqrt(rms / SIZE);
+        if (rms < 0.01) return -1;
+
+        let r1 = 0, r2 = SIZE - 1, thres = 0.2;
+        for (let i = 0; i < SIZE / 2; i++)
+            if (Math.abs(buf[i]) < thres) { r1 = i; break; }
+        for (let i = 1; i < SIZE / 2; i++)
+            if (Math.abs(buf[SIZE - i]) < thres) { r2 = SIZE - i; break; }
+
+        buf = buf.slice(r1, r2);
+        SIZE = buf.length;
+
+        let c = new Array(SIZE).fill(0);
+        for (let i = 0; i < SIZE; i++)
+            for (let j = 0; j < SIZE - i; j++)
+                c[i] = c[i] + buf[j] * buf[j + i];
+
+        let d = 0; while (c[d] > c[d + 1]) d++;
+        let maxval = -1, maxpos = -1;
+        for (let i = d; i < SIZE; i++) {
+            if (c[i] > maxval) {
+                maxval = c[i];
+                maxpos = i;
+            }
+        }
+        let T0 = maxpos;
+
+        let x1 = c[T0 - 1], x2 = c[T0], x3 = c[T0 + 1];
+        let a = (x1 + x3 - 2 * x2) / 2;
+        let b = (x3 - x1) / 2;
+        if (a) T0 = T0 - b / (2 * a);
+
+        return sampleRate / T0;
+    }
+
+    function setMode(mode) {
+        currentMode = mode;
+
+        document.getElementById('tab-realtime').classList.remove('active');
+        document.getElementById('tab-constant').classList.remove('active');
+        document.getElementById(`tab-${mode}`).classList.add('active');
+
+        resetState();
+    }
+
+    function resetState() {
+        freqHistory = [];
+        isLocked = false;
+        lockedFreq = 0;
+
+        // UI Reset
+        document.getElementById('freq-display').innerText = '-- Hz';
+        document.getElementById('note-display').innerText = 'Note: --';
+        document.getElementById('status-text').innerText = '';
+        document.getElementById('playback-container').style.display = 'none';
+
+        if (currentMode === 'constant' && isListening) {
+            document.getElementById('status-text').style.color = 'var(--primary)';
+            document.getElementById('status-text').innerText = 'Detecting stable frequency...';
+            document.getElementById('freq-display').style.display = 'block';
+            document.getElementById('note-display').style.display = 'block';
+            document.getElementById('constant-loading').style.display = 'none';
+        }
+    }
+
+    async function toggleDetection() {
+        const btn = document.getElementById('start-btn');
+
+        if (isListening) {
+            // Stop recording
+
+            if (currentMode === 'constant') {
+                // The user stopped it, so we process whatever we gathered
+                isRecordingConstant = false;
+                processConstantResult();
+            }
+
+            if (microphone) {
+                microphone.mediaStream.getTracks().forEach(track => track.stop());
+                microphone.disconnect();
+            }
+            if (animationId) cancelAnimationFrame(animationId);
+            isListening = false;
+            btn.innerText = "Start Listening";
+            btn.style.background = "var(--primary)";
+            document.getElementById('status-text').innerText = '';
+        } else {
+            // Start
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Resume needed for some browsers if initialized before user gesture
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                microphone = audioCtx.createMediaStreamSource(stream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 2048;
+                microphone.connect(analyser);
+
+                isListening = true;
+                btn.innerText = "Stop Listening";
+                btn.style.background = "#ef4444";
+
+                resetState();
+
+                if (currentMode === 'constant') {
+                    isRecordingConstant = true;
+                    document.getElementById('freq-display').style.display = 'none';
+                    document.getElementById('note-display').style.display = 'none';
+                    document.getElementById('constant-loading').style.display = 'flex';
+                    document.getElementById('status-text').style.color = 'var(--primary)';
+                    document.getElementById('status-text').innerText = 'Recording... Press Stop when finished.';
+                }
+
+                updatePitch();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('status-text').style.color = '#ef4444';
+                document.getElementById('status-text').innerText = "Microphone access denied or error.";
+            }
+        }
+    }
+
+    const buf = new Float32Array(2048);
+
+    function updatePitch() {
+        if (!isListening) return; // Note we removed the || isLocked check
+
+        analyser.getFloatTimeDomainData(buf);
+        let ac = autoCorrelate(buf, audioCtx.sampleRate);
+
+        if (ac === -1) {
+            // No strong pitch detected
+            if (currentMode === 'realtime') {
+                document.getElementById('freq-display').innerText = '-- Hz';
+                document.getElementById('note-display').innerText = 'Note: --';
+            }
+        } else {
+            let pitch = Math.round(ac);
+
+            // Filter crazy high/low values
+            if (pitch >= 20 && pitch <= 20000) {
+                if (currentMode === 'realtime') {
+                    displayPitch(pitch);
+                } else if (currentMode === 'constant' && isRecordingConstant) {
+                    freqHistory.push(pitch);
+                }
+            }
+        }
+
+        animationId = requestAnimationFrame(updatePitch);
+    }
+
+    function displayPitch(pitch) {
+        document.getElementById('freq-display').innerText = `${pitch} Hz`;
+        let note = noteFromPitch(pitch);
+        let noteName = noteStrings[note % 12];
+        let octave = Math.floor(note / 12) - 1;
+        document.getElementById('note-display').innerText = `Note: ${noteName}${octave}`;
+    }
+
+    function processConstantResult() {
+        document.getElementById('constant-loading').style.display = 'none';
+        document.getElementById('freq-display').style.display = 'block';
+        document.getElementById('note-display').style.display = 'block';
+
+        if (freqHistory.length < 10) {
+            document.getElementById('status-text').style.color = '#ef4444';
+            document.getElementById('status-text').innerText = 'Not enough clear audio detected. Try again loud and clear.';
+            return;
+        }
+
+        // Sort to find the median / filter outliers
+        freqHistory.sort((a, b) => a - b);
+        let trimCount = Math.floor(freqHistory.length * 0.1);
+        let trimmedPoints = length > 20 ? freqHistory.slice(trimCount, freqHistory.length - trimCount) : freqHistory;
+
+        if (trimmedPoints.length === 0) trimmedPoints = freqHistory;
+
+        // Calculate Average
+        const sum = trimmedPoints.reduce((a, b) => a + b, 0);
+        const avg = sum / trimmedPoints.length;
+
+        lockFrequency(Math.round(avg));
+    }
+
+    function lockFrequency(pitch) {
+        finalConstantResult = pitch;
+
+        displayPitch(pitch);
+        document.getElementById('status-text').style.color = '#10b981';
+        document.getElementById('status-text').innerText = 'Averaged Frequency Calculated!';
+
+        // Update link to pass the exact frequency to the generator
+        document.getElementById('playback-link').href = `/frequency?hz=${pitch}`;
+
+        document.getElementById('playback-container').style.display = 'block';
+    }
+</script>
+
+<div class="glass-card" style="max-width: 800px; margin: 3rem auto; padding: 2rem; position: relative; text-align: center;">
+    <h2 style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">Unlocking the Hidden Language of Sound</h2>
+    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
+        We live our entire lives swimming in an invisible ocean of sound waves. Every passing car, every chirping bird, the hum of your refrigerator, and even your own voice are constantly filling the air with vibrations. Most of the time, we just hear the noise and move on. But what if you could actually see that sound? What if you could pinpoint the exact mathematical pitch of the world around you?
+    </p>
+    <a href="/blog/frequency-detector" class="secondary-btn" style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+        Read Full Guide on our Blog
+    </a>
+</div>
