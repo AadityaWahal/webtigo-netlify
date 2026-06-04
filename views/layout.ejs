@@ -44,19 +44,19 @@
     "@graph": [
       {
         "@type": "WebSite",
-        "url": "https://webtigo.vercel.app/",
+        "url": "<%= siteUrl %>/",
         "name": "Webtigo",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://webtigo.vercel.app/search?q={search_term_string}",
+          "target": "<%= siteUrl %>/search?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "Organization",
         "name": "Webtigo",
-        "url": "https://webtigo.vercel.app/",
-        "logo": "https://webtigo.vercel.app/logo.png",
+        "url": "<%= siteUrl %>/",
+        "logo": "<%= siteUrl %>/logo.png",
         "sameAs": [
           "http://www.youtube.com/@Member_of_Multivers"
         ]
@@ -64,32 +64,57 @@
       {
         "@type": "SiteNavigationElement",
         "name": "Text to Speech",
-        "url": "https://webtigo.vercel.app/tts"
+        "url": "<%= siteUrl %>/tts"
       },
       {
         "@type": "SiteNavigationElement",
         "name": "Image Compressor",
-        "url": "https://webtigo.vercel.app/compressor"
+        "url": "<%= siteUrl %>/compressor"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Image Resizer",
+        "url": "<%= siteUrl %>/resizer"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Images to PDF",
+        "url": "<%= siteUrl %>/images-to-pdf"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "PDF to Images",
+        "url": "<%= siteUrl %>/pdf-to-images"
       },
       {
         "@type": "SiteNavigationElement",
         "name": "QR Code Generator",
-        "url": "https://webtigo.vercel.app/qrcode"
+        "url": "<%= siteUrl %>/qrcode"
       },
       {
         "@type": "SiteNavigationElement",
-        "name": "Premium Tools",
-        "url": "https://webtigo-premium.vercel.app/"
+        "name": "Case Converter",
+        "url": "<%= siteUrl %>/case-converter"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Frequency Generator",
+        "url": "<%= siteUrl %>/frequency"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "Frequency Detector",
+        "url": "<%= siteUrl %>/frequency-detector"
       },
       {
         "@type": "SiteNavigationElement",
         "name": "Blog",
-        "url": "https://webtigo.vercel.app/blog"
+        "url": "<%= siteUrl %>/blog"
       },
       {
         "@type": "SiteNavigationElement",
         "name": "Social Media",
-        "url": "https://webtigo.vercel.app/social-media"
+        "url": "<%= siteUrl %>/social-media"
       }
     ]
   }
@@ -129,6 +154,34 @@
     </div>
     <div class="nav-links">
       <a href="/">Home</a>
+      <div class="nav-dropdown">
+        <button class="dropdown-btn" type="button">
+          Tools
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="dropdown-content">
+          <div class="dropdown-group">
+            <span class="dropdown-group-title">Images & PDF</span>
+            <a href="/compressor">Image Compressor</a>
+            <a href="/resizer">Image Resizer</a>
+            <a href="/images-to-pdf">Images to PDF</a>
+            <a href="/pdf-to-images">PDF to Images</a>
+          </div>
+          <div class="dropdown-group">
+            <span class="dropdown-group-title">Audio & Text</span>
+            <a href="/tts">Text to Speech</a>
+            <a href="/case-converter">Case Converter</a>
+            <a href="/frequency">Tone Generator</a>
+            <a href="/frequency-detector">Pitch Detector</a>
+          </div>
+          <div class="dropdown-group">
+            <span class="dropdown-group-title">Other</span>
+            <a href="/qrcode">QR Code Generator</a>
+          </div>
+        </div>
+      </div>
       <a href="/blog">Blog</a>
       <a href="/social-media">Social Media</a>
       <a href="https://webtigo-premium.vercel.app/" target="_blank" class="premium-link">Premium</a>
@@ -153,32 +206,59 @@
     </script>
   </div>
 
-  <footer>
-    <div style="margin-bottom: 1rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
-      <a href="/about"
-        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
-        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">About Us</a>
-      <a href="/privacy"
-        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
-        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">Privacy Policy</a>
-      <a href="/terms"
-        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
-        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">Terms of Service</a>
-      <a href="/contact"
-        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;"
-        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'">Contact Us</a>
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-column brand-col">
+        <div class="footer-logo" style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+          <img src="/logo.png" alt="Webtigo Logo" style="height: 35px; width: auto;">
+          <span style="font-weight: 700; font-size: 1.2rem; color: white;">Webtigo</span>
+        </div>
+        <p class="footer-desc">Free premium-grade web utilities. Convert PDFs, compress images, generate waves, and more. Fast, secure, and fully browser-based.</p>
+        <div class="footer-social" style="margin-top: 1rem;">
+          <a href="http://www.youtube.com/@Member_of_Multivers" target="_blank" class="youtube-link-footer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.342 1.12.33 3.466.33 3.466s.012 2.345-.33 3.465a2.01 2.01 0 0 1-1.415 1.42c-1.123.302-5.288.332-6.11.335h-.089c-.822-.003-4.987-.033-6.11-.335a2.01 2.01 0 0 1-1.415-1.42C.012 10.345.025 8 .025 8s-.012-2.345.33-3.465a2.01 2.01 0 0 1 1.415-1.42c1.123-.302 5.288-.332 6.11-.335zM6.658 5.435v4.13L10.203 7.5 6.658 5.435z"/>
+            </svg>
+            YouTube Channel
+          </a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>Image & PDF Tools</h3>
+        <ul>
+          <li><a href="/compressor">Image Compressor</a></li>
+          <li><a href="/resizer">Image Resizer</a></li>
+          <li><a href="/images-to-pdf">Images to PDF</a></li>
+          <li><a href="/pdf-to-images">PDF to Images</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Audio & Text Tools</h3>
+        <ul>
+          <li><a href="/tts">Text to Speech</a></li>
+          <li><a href="/case-converter">Case Converter</a></li>
+          <li><a href="/frequency">Tone Generator</a></li>
+          <li><a href="/frequency-detector">Pitch Detector</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Resources & Info</h3>
+        <ul>
+          <li><a href="/blog">Our Blog</a></li>
+          <li><a href="/social-media">Social Media</a></li>
+          <li><a href="/qrcode">QR Code Generator</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+        </ul>
+      </div>
     </div>
-    
-    <div style="margin-bottom: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem;">
-      <a href="http://www.youtube.com/@Member_of_Multivers" target="_blank" style="display: flex; align-items: center; gap: 8px; color: #ff0000; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.342 1.12.33 3.466.33 3.466s.012 2.345-.33 3.465a2.01 2.01 0 0 1-1.415 1.42c-1.123.302-5.288.332-6.11.335h-.089c-.822-.003-4.987-.033-6.11-.335a2.01 2.01 0 0 1-1.415-1.42C.012 10.345.025 8 .025 8s-.012-2.345.33-3.465a2.01 2.01 0 0 1 1.415-1.42c1.123-.302 5.288-.332 6.11-.335zM6.658 5.435v4.13L10.203 7.5 6.658 5.435z"/>
-        </svg>
-        YouTube
-      </a>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Member of Mutivers (Aaditya Wahal). All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
     </div>
-
-    <p>&copy; 2026 Member of Mutivers (Aaditya Wahal). All rights reserved.</p>
   </footer>
 
   <script>
