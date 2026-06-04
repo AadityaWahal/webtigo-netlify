@@ -204,7 +204,7 @@ app.get('/blog/images-to-pdf', (req, res) => {
 
 app.get('/blog/pdf-to-images', (req, res) => {
     res.render('pages/blog-pdf-to-images', {
-        title: 'Free Your Photos: The Ultimate Guide to the Webtigo PDF to Image Converter - Webtigo Blog',
+        title: 'Free Your Photos: The Ultimate Guide to the Webtigo PDF to Image Converter',
         description: 'Learn how to extract high-quality PNGs and JPGs from any PDF file without taking blurry screenshots. Perfect for social media and web development.',
         keywords: 'pdf to image guide, pdf extractor, convert pdf to png, how to put pdf on instagram, pdf to jpg high quality'
     });
@@ -212,7 +212,7 @@ app.get('/blog/pdf-to-images', (req, res) => {
 
 app.get('/blog/compressor', (req, res) => {
     res.render('pages/blog-compressor', {
-        title: 'Shrink the Size, Keep the Quality: The Ultimate Guide to the Webtigo Image Compressor - Webtigo Blog',
+        title: 'Shrink the Size, Keep the Quality: The Ultimate Guide to the Webtigo Image Compressor',
         description: 'Reduce image file sizes instantly without losing quality. Perfect for meeting upload limits, speeding up websites, and saving hard drive space.',
         keywords: 'image compressor guide, reduce photo size online, compress jpg, compress png, optimize images for web'
     });
@@ -220,7 +220,7 @@ app.get('/blog/compressor', (req, res) => {
 
 app.get('/blog/resizer', (req, res) => {
     res.render('pages/blog-resizer', {
-        title: 'Pixel Perfect Every Time: The Ultimate Guide to the Webtigo Image Resizer - Webtigo Blog',
+        title: 'Pixel Perfect Every Time: The Ultimate Guide to the Webtigo Image Resizer',
         description: 'Take control of your image dimensions. Get the perfect pixels for YouTube thumbnails, Instagram posts, and official passport photos instantly.',
         keywords: 'image resizer guide, resize photo pixels, 1080x1080, youtube thumbnail size, resize image for web'
     });
@@ -228,7 +228,7 @@ app.get('/blog/resizer', (req, res) => {
 
 app.get('/blog/qrcode', (req, res) => {
     res.render('pages/blog-qrcode', {
-        title: 'The Magic Square: The Ultimate Guide to the Webtigo QR Code Generator - Webtigo Blog',
+        title: 'The Magic Square: The Ultimate Guide to the Webtigo QR Code Generator',
         description: 'Instantly generate QR codes for URLs, social media profiles, or secret text messages. Completely free, no software required.',
         keywords: 'qr code generator, create qr code free, text qr code, url to qr code, scan qr code online'
     });
@@ -236,7 +236,7 @@ app.get('/blog/qrcode', (req, res) => {
 
 app.get('/blog/case-converter', (req, res) => {
     res.render('pages/blog-case-converter', {
-        title: 'Master Your Text: The Ultimate Guide to the Webtigo Case Converter - Webtigo Blog',
+        title: 'Master Your Text: The Ultimate Guide to the Webtigo Case Converter',
         description: 'Instantly transform text between UPPERCASE, lowercase, Title Case, and more. Perfect for fixing caps lock errors and formatting code variables.',
         keywords: 'case converter guide, change text case, uppercase to lowercase, title case online, camelCase, snake_case'
     });
@@ -372,7 +372,7 @@ app.get('/social-media', (req, res) => {
 
 app.get('/my-channel', (req, res) => {
     res.render('pages/my-channel', {
-        title: 'My Channel - Member of Multivers | Webtigo',
+        title: 'My Channel - Member of Multivers',
         description: 'Official channel of Member of Multivers. Explore frequency tutorials, QR code guides, and tech explorations.',
         keywords: 'Member of Multivers, YouTube channel, frequency generator tutorials, tech blog'
     });
