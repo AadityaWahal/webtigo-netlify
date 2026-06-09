@@ -84,7 +84,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 // Clerk Middleware (MUST be before routes that need auth)
 // Wrap in a key check to prevent server errors (500) if environment variables are not configured in Vercel.
-const isNetlify = process.env.NETLIFY === 'true';
+const isNetlify = true;
 const hasClerkKeys = !isNetlify && !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY) && !!process.env.CLERK_SECRET_KEY;
 
 if (hasClerkKeys) {
