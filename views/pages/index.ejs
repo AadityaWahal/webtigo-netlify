@@ -93,6 +93,23 @@
         <a href="/blog/case-converter" class="blog-link-inline">📖 Related Guide</a>
     </div>
 
+    <div class="tool-card tool-card-polyhedra" data-href="https://noblepolyhedra.vercel.app/" data-keywords="noble polyhedra polyhedron 3d shapes solid figures geometry math models python interactive atlas studio">
+        <a href="https://noblepolyhedra.vercel.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
+            <div class="tool-icon polyhedron-icon-wrap" title="Interactive Revolving 3D Polyhedron">
+                <canvas id="polyhedron-card-canvas" class="polyhedron-canvas" width="116" height="116" aria-label="Revolving 3D Polyhedron"></canvas>
+            </div>
+            <div class="tool-title-row">
+                <span class="tool-title polyhedra-title">Noble Polyhedra</span>
+                <span class="tool-tag-3d">3D Studio</span>
+            </div>
+            <span class="tool-desc">Interactive 3D models of newly discovered & classical polyhedron shapes modeled in Python.</span>
+        </a>
+        <a href="https://noblepolyhedra.vercel.app/" target="_blank" rel="noopener noreferrer" class="blog-link-inline polyhedra-launch-link">
+            <span>🌐 Launch 3D Atlas</span>
+            <span class="external-arrow">↗</span>
+        </a>
+    </div>
+
     <div class="tool-card" data-href="https://webtigo-premium.vercel.app/" style="border-color: var(--premium);">
         <a href="https://webtigo-premium.vercel.app/" target="_blank" class="tool-link">
             <span class="tool-icon">👑</span>
@@ -164,26 +181,227 @@
         const searchInput = document.getElementById('tool-search');
         const toolCards = document.querySelectorAll('.tool-card');
 
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase().trim();
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
 
-            toolCards.forEach(card => {
-                const title = card.querySelector('.tool-title').innerText.toLowerCase();
-                const desc = card.querySelector('.tool-desc').innerText.toLowerCase();
-                const href = card.getAttribute('data-href') || '';
-                const keywords = href.replace('/', '').replace('-', ' ');
+                toolCards.forEach(card => {
+                    const titleEl = card.querySelector('.tool-title');
+                    const descEl = card.querySelector('.tool-desc');
+                    const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+                    const desc = descEl ? descEl.innerText.toLowerCase() : '';
+                    const href = card.getAttribute('data-href') || '';
+                    const extraKeywords = card.getAttribute('data-keywords') || '';
+                    const keywords = (extraKeywords + ' ' + href.replace('/', '').replace('-', ' ')).toLowerCase();
 
-                if (title.includes(term) || desc.includes(term) || keywords.includes(term)) {
-                    card.style.display = 'flex';
-                    // Re-trigger animation if hidden previously
-                    if (card.style.opacity === '0') {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
+                    if (title.includes(term) || desc.includes(term) || keywords.includes(term)) {
+                        card.style.display = 'flex';
+                        // Re-trigger animation if hidden previously
+                        if (card.style.opacity === '0') {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }
+                    } else {
+                        card.style.display = 'none';
                     }
-                } else {
-                    card.style.display = 'none';
-                }
+                });
             });
-        });
+        }
+
+        // --- 3D Revolving Polyhedron Icon Renderer ---
+        (function initPolyhedronCanvas() {
+            const canvas = document.getElementById('polyhedron-card-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            // Mathematical Icosahedron / Noble Polyhedron geometry
+            const phi = (1 + Math.sqrt(5)) / 2;
+            const rawVertices = [
+                [-1,  phi,  0], [ 1,  phi,  0], [-1, -phi,  0], [ 1, -phi,  0],
+                [ 0, -1,  phi], [ 0,  1,  phi], [ 0, -1, -phi], [ 0,  1, -phi],
+                [ phi,  0, -1], [ phi,  0,  1], [-phi,  0, -1], [-phi,  0,  1]
+            ];
+            const norm = Math.hypot(1, phi, 0);
+            const baseVertices = rawVertices.map(v => [v[0] / norm, v[1] / norm, v[2] / norm]);
+
+            const faces = [
+                [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+                [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+                [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+                [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]
+            ];
+
+            let rotX = 0.35;
+            let rotY = 0.45;
+            let rotZ = 0.15;
+            let speedX = 0.009;
+            let speedY = 0.016;
+            let targetSpeedX = 0.009;
+            let targetSpeedY = 0.016;
+            let isVisible = true;
+            let animationFrameId = null;
+
+            const card = canvas.closest('.tool-card');
+            if (card) {
+                card.addEventListener('mouseenter', () => {
+                    targetSpeedX = 0.022;
+                    targetSpeedY = 0.038;
+                });
+                card.addEventListener('mouseleave', () => {
+                    targetSpeedX = 0.009;
+                    targetSpeedY = 0.016;
+                });
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const relX = (e.clientX - rect.left) / rect.width - 0.5;
+                    const relY = (e.clientY - rect.top) / rect.height - 0.5;
+                    targetSpeedX = 0.022 + relY * 0.035;
+                    targetSpeedY = 0.035 + relX * 0.045;
+                });
+            }
+
+            // Directional light vector (normalized)
+            const light = [0.36, 0.72, 0.59];
+
+            function render() {
+                if (!isVisible) return;
+
+                // Smooth speed transition
+                speedX += (targetSpeedX - speedX) * 0.08;
+                speedY += (targetSpeedY - speedY) * 0.08;
+
+                rotX += speedX;
+                rotY += speedY;
+                rotZ += 0.003;
+
+                const w = canvas.width;
+                const h = canvas.height;
+                ctx.clearRect(0, 0, w, h);
+
+                const cx = w / 2;
+                const cy = h / 2;
+                const scale = w * 0.38; // Size of shape in canvas
+                const camDist = 2.8;
+
+                const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+                const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+                const cosZ = Math.cos(rotZ), sinZ = Math.sin(rotZ);
+
+                // Transform vertices
+                const transformed = baseVertices.map(([x0, y0, z0]) => {
+                    // Rot X
+                    const y1 = y0 * cosX - z0 * sinX;
+                    const z1 = y0 * sinX + z0 * cosX;
+                    // Rot Y
+                    const x2 = x0 * cosY + z1 * sinY;
+                    const z2 = -x0 * sinY + z1 * cosY;
+                    // Rot Z
+                    const x3 = x2 * cosZ - y1 * sinZ;
+                    const y3 = x2 * sinZ + y1 * cosZ;
+                    const z3 = z2;
+
+                    // Perspective
+                    const k = scale / (camDist - z3);
+                    return {
+                        x: cx + x3 * k,
+                        y: cy - y3 * k,
+                        z: z3,
+                        px: x3,
+                        py: y3,
+                        pz: z3
+                    };
+                });
+
+                // Prepare faces with normals, lighting and depth
+                const faceData = faces.map((faceIndices) => {
+                    const p0 = transformed[faceIndices[0]];
+                    const p1 = transformed[faceIndices[1]];
+                    const p2 = transformed[faceIndices[2]];
+
+                    const v1 = [p1.px - p0.px, p1.py - p0.py, p1.pz - p0.pz];
+                    const v2 = [p2.px - p0.px, p2.py - p0.py, p2.pz - p0.pz];
+                    const nx = v1[1] * v2[2] - v1[2] * v2[1];
+                    const ny = v1[2] * v2[0] - v1[0] * v2[2];
+                    const nz = v1[0] * v2[1] - v1[1] * v2[0];
+                    const len = Math.hypot(nx, ny, nz) || 1;
+                    const unx = nx / len, uny = ny / len, unz = nz / len;
+
+                    const dot = Math.max(0, unx * light[0] + uny * light[1] + unz * light[2]);
+                    const avgZ = (p0.z + p1.z + p2.z) / 3;
+
+                    return { p0, p1, p2, nz: unz, dot, avgZ };
+                });
+
+                // Depth sort for translucent facets
+                faceData.sort((a, b) => a.avgZ - b.avgZ);
+
+                // Render faces
+                faceData.forEach(({ p0, p1, p2, nz, dot }) => {
+                    ctx.beginPath();
+                    ctx.moveTo(p0.x, p0.y);
+                    ctx.lineTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.closePath();
+
+                    if (nz > 0) {
+                        // Front face: vibrant illuminated violet-cyan gradient fill
+                        const intensity = Math.min(1, Math.max(0, dot));
+                        const alpha = 0.35 + intensity * 0.45;
+                        ctx.fillStyle = `rgba(${Math.round(124 + intensity * 60)}, ${Math.round(92 + intensity * 120)}, ${Math.round(246 + intensity * 9)}, ${alpha})`;
+                        ctx.fill();
+
+                        ctx.strokeStyle = `rgba(167, 139, 250, ${0.75 + intensity * 0.25})`;
+                        ctx.lineWidth = 1.6;
+                        ctx.lineJoin = 'round';
+                        ctx.stroke();
+                    } else {
+                        // Back face: soft ambient wireframe
+                        ctx.fillStyle = 'rgba(79, 70, 229, 0.08)';
+                        ctx.fill();
+
+                        ctx.strokeStyle = 'rgba(129, 140, 248, 0.28)';
+                        ctx.lineWidth = 1.0;
+                        ctx.lineJoin = 'round';
+                        ctx.stroke();
+                    }
+                });
+
+                // Render glowing vertex nodes
+                transformed.forEach(pt => {
+                    if (pt.z > -0.25) {
+                        const nodeAlpha = Math.min(1, Math.max(0.35, (pt.z + 1) / 2));
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, 2.2, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(56, 189, 248, ${nodeAlpha})`;
+                        ctx.shadowColor = 'rgba(56, 189, 248, 0.85)';
+                        ctx.shadowBlur = 6;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+
+                animationFrameId = requestAnimationFrame(render);
+            }
+
+            // Pause animation when scrolled offscreen for optimal performance
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(([entry]) => {
+                    if (entry.isIntersecting) {
+                        if (!isVisible) {
+                            isVisible = true;
+                            animationFrameId = requestAnimationFrame(render);
+                        }
+                    } else {
+                        isVisible = false;
+                        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                    }
+                }, { threshold: 0.05 });
+                observer.observe(canvas);
+            }
+
+            animationFrameId = requestAnimationFrame(render);
+        })();
     });
-</script>
+</script>
+
