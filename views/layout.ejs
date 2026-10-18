@@ -128,6 +128,8 @@
     <%= title %>
   </title>
   <link rel="stylesheet" href="/css/globals.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- Clerk Auth -->
@@ -146,16 +148,16 @@
 </head>
 
 <body>
-  <div class="background-container">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
+  <div class="background-container"></div>
   <nav class="navbar">
-    <div class="logo" style="display: flex; align-items: center; gap: 10px;">
-      <img src="/logo.png" alt="Webtigo Logo" style="height: 40px; width: auto;">
-      <span>Webtigo</span>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="/" class="navbar-brand">
+        <img src="/logo.png" alt="Webtigo Logo" width="36" height="36" style="height: 36px; width: auto;" loading="eager">
+        <span class="logo">Webtigo</span>
+      </a>
     </div>
+
+    <!-- Desktop Navigation Links -->
     <div class="nav-links">
       <a href="/">Home</a>
       <div class="nav-dropdown">
@@ -190,15 +192,18 @@
       <a href="/blog">Blog</a>
       <a href="/social-media">Social Media</a>
       <a href="https://webtigo-premium.vercel.app/" target="_blank" class="premium-link">Premium</a>
-      <!-- Auth State & Sign In Button -->
-      <div id="auth-nav-container" style="display: flex; align-items: center; gap: 0.75rem;">
+    </div>
+
+    <!-- Right Actions: ALWAYS Visible Sign In Button + Mobile Hamburger Toggle -->
+    <div class="navbar-actions">
+      <div id="auth-nav-container">
         <% if (typeof user !== 'undefined' && user) { %>
           <div class="user-badge-dropdown" style="position: relative;">
             <button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.35rem 0.85rem; border-radius: 9999px; color: white; cursor: pointer; transition: all 0.2s ease;">
               <span style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
                 <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
               </span>
-              <span style="font-size: 0.9rem; font-weight: 600; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.name %></span>
+              <span style="font-size: 0.9rem; font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.name %></span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
             <div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 200px; padding: 0.75rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">
@@ -216,15 +221,43 @@
             </div>
           </div>
         <% } else { %>
-          <a href="/signin" id="sign-in-btn" class="sign-in-nav-btn" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white !important; padding: 0.45rem 1.1rem; border-radius: 9999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3); transition: all 0.2s ease;">
+          <a href="/signin" id="sign-in-btn" class="sign-in-nav-btn" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white !important; padding: 0.45rem 1.1rem; border-radius: 9999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35); transition: transform 0.2s;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span>Sign In</span>
           </a>
         <% } %>
         <div id="user-button"></div>
       </div>
+
+      <!-- Mobile Hamburger Toggle Button -->
+      <button type="button" class="mobile-toggle-btn" id="mobile-menu-toggle" aria-label="Toggle navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
   </nav>
+
+  <!-- Mobile Dropdown Navigation Drawer -->
+  <div class="mobile-menu-drawer" id="mobile-drawer">
+    <a href="/">🏠 Home</a>
+    <a href="/compressor">📉 Image Compressor</a>
+    <a href="/resizer">📐 Image Resizer</a>
+    <a href="/images-to-pdf">📑 Images to PDF</a>
+    <a href="/pdf-to-images">🖼️ PDF to Images</a>
+    <a href="/tts">🔊 Text to Speech</a>
+    <a href="/case-converter">🔤 Case Converter</a>
+    <a href="/frequency">〰️ Tone Generator</a>
+    <a href="/frequency-detector">🎙️ Pitch Detector</a>
+    <a href="/qrcode">🔳 QR Code Generator</a>
+    <a href="/blog">📖 Blog & Guides</a>
+    <a href="/social-media">🌐 Social Media</a>
+    <a href="/signin" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2)); border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; font-weight: 600;">
+      🔑 Sign In / Member Access <span>&rarr;</span>
+    </a>
+  </div>
 
   <main class="container">
     <%- body %>
@@ -280,6 +313,7 @@
       <div class="footer-column">
         <h3>Resources & Info</h3>
         <ul>
+          <li><a href="/signin" style="color: #60a5fa; font-weight: 600;">🔑 Member Sign In</a></li>
           <li><a href="/blog">Our Blog</a></li>
           <li><a href="https://noblepolyhedra.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: #c4b5fd; font-weight: 500;">Noble Polyhedra 3D ↗</a></li>
           <li><a href="/social-media">Social Media</a></li>
@@ -299,36 +333,42 @@
   </footer>
 
   <script>
-    // Scroll Reveal Animation (Apple Style)
+    // Fast Reveal Animation (Hardware Accelerated)
     document.addEventListener("DOMContentLoaded", function () {
-      // 1. Enable JS animations only if JS loads
       document.body.classList.add('js-enabled');
 
-      // 2. Fallback: If IntersectionObserver is not supported, reveal all immediately
-      if (!('IntersectionObserver' in window)) {
-        document.querySelectorAll('.tool-card').forEach(card => card.classList.add('reveal'));
-        return;
-      }
-
-      const observerIn = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('reveal');
-            observerIn.unobserve(entry.target); // Performance: stop observing once revealed
+      // Mobile drawer toggle
+      const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+      const mobileDrawer = document.getElementById('mobile-drawer');
+      if (mobileMenuToggle && mobileDrawer) {
+        mobileMenuToggle.addEventListener('click', function (e) {
+          e.stopPropagation();
+          mobileDrawer.classList.toggle('open');
+        });
+        document.addEventListener('click', function (e) {
+          if (!mobileDrawer.contains(e.target) && e.target !== mobileMenuToggle) {
+            mobileDrawer.classList.remove('open');
           }
         });
-      }, { threshold: 0.1, rootMargin: "50px" }); // Increased margin to trigger earlier
+      }
 
-      const cards = document.querySelectorAll('.tool-card');
-      cards.forEach((card, index) => {
-        card.style.transitionDelay = `${index * 50}ms`; // Stagger effect
-        observerIn.observe(card);
-      });
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.tool-card').forEach(card => card.classList.add('reveal'));
+      } else {
+        const observerIn = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('reveal');
+              observerIn.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.05, rootMargin: "100px" });
 
-      // Safety net: Force reveal immediately for crawlers
-      setTimeout(() => {
-        cards.forEach(card => card.classList.add('reveal'));
-      }, 0);
+        document.querySelectorAll('.tool-card').forEach((card, index) => {
+          card.style.transitionDelay = `${Math.min(index * 30, 200)}ms`;
+          observerIn.observe(card);
+        });
+      }
 
       // User Profile Dropdown Toggle
       const userMenuBtn = document.getElementById('user-menu-btn');
@@ -394,37 +434,21 @@
 
   <% if (typeof currentPath==='undefined' || (currentPath !=='/tts' && currentPath !=='/frequency' && currentPath
     !=='/frequency-detector' ) ) { %>
-    <audio id="bg-music" loop>
+    <audio id="bg-music" loop preload="none">
       <source src="/audio/background.mp3" type="audio/mpeg">
     </audio>
     <script>
+      // Audio lazy-initialization on first intentional user click
       document.addEventListener('DOMContentLoaded', function () {
         var audio = document.getElementById('bg-music');
         if (audio) {
-          audio.volume = 0.5; // Set default volume to 50%
-
-          var playAttempt = setInterval(() => {
-            audio.play()
-              .then(() => {
-                clearInterval(playAttempt);
-              })
-              .catch(error => {
-                console.log('Audio autoplay prevented, waiting for interaction.');
-              });
-          }, 3000);
-
-          const unlockAudio = () => {
+          audio.volume = 0.35;
+          const playAudioOnce = () => {
             audio.play().then(() => {
-              clearInterval(playAttempt);
-              document.removeEventListener('click', unlockAudio);
-              document.removeEventListener('scroll', unlockAudio);
-              document.removeEventListener('keydown', unlockAudio);
-            }).catch(e => { });
+              document.removeEventListener('click', playAudioOnce);
+            }).catch(() => {});
           };
-
-          document.addEventListener('click', unlockAudio);
-          document.addEventListener('scroll', unlockAudio);
-          document.addEventListener('keydown', unlockAudio);
+          document.addEventListener('click', playAudioOnce, { once: true });
         }
       });
     </script>

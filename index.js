@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const expressLayouts = require('express-ejs-layouts');
 const multer = require('multer');
 const cors = require('cors');
@@ -37,6 +38,12 @@ if (resultLocal.error) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
+
+// High-speed compression middleware (compresses all text/html/json/css/js responses)
+app.use(compression({
+    level: 6,
+    threshold: 1024
+}));
 
 // Middleware
 app.use(cors());
@@ -87,8 +94,11 @@ app.get('/sitemap1.xml', async (req, res) => {
     }
 });
 
-// Explicit absolute path for static files (works in serverless and standalone)
-app.use(express.static(resolveAppPath('public')));
+// Explicit absolute path for static files with caching for fast repeat loads
+app.use(express.static(resolveAppPath('public'), {
+    maxAge: '7d',
+    etag: true
+}));
 
 // Helper to extract Clerk Frontend API domain from publishable key
 function getClerkFrontendApi(publishableKey) {
