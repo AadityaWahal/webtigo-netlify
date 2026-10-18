@@ -4,15 +4,17 @@
     "description": "Premium Web Tools",
     "main": "index.js",
     "engines": {
-        "node": "20.x"
+        "node": ">=20"
     },
     "scripts": {
+        "build": "echo \"Build complete\"",
         "start": "node index.js",
-        "dev": "nodemon index.js"
+        "dev": "node index.js"
     },
     "dependencies": {
         "@clerk/express": "^1.7.72",
         "adm-zip": "^0.5.16",
+        "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
         "dommatrix": "^1.0.3",
         "dotenv": "^16.3.1",

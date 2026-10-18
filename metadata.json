@@ -1,0 +1,7 @@
+{
+  "name": "Webtigo",
+  "description": "Free Online PDF, Image & Audio Tools. Convert PDF to JPG, compress images, generate QR codes, and convert text to speech.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

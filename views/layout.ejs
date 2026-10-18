@@ -190,8 +190,39 @@
       <a href="/blog">Blog</a>
       <a href="/social-media">Social Media</a>
       <a href="https://webtigo-premium.vercel.app/" target="_blank" class="premium-link">Premium</a>
-      <a href="/signin" id="sign-in-btn" style="display: none;">Sign In</a>
-      <div id="user-button"></div>
+      <!-- Auth State & Sign In Button -->
+      <div id="auth-nav-container" style="display: flex; align-items: center; gap: 0.75rem;">
+        <% if (typeof user !== 'undefined' && user) { %>
+          <div class="user-badge-dropdown" style="position: relative;">
+            <button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.35rem 0.85rem; border-radius: 9999px; color: white; cursor: pointer; transition: all 0.2s ease;">
+              <span style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+              </span>
+              <span style="font-size: 0.9rem; font-weight: 600; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.name %></span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 200px; padding: 0.75rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">
+              <div style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-weight: 600; font-size: 0.9rem; color: white;"><%= user.name %></div>
+                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis;"><%= user.email %></div>
+                <div style="margin-top: 4px; display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">
+                  <%= user.role || 'Member' %>
+                </div>
+              </div>
+              <button type="button" onclick="handleLogout()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        <% } else { %>
+          <a href="/signin" id="sign-in-btn" class="sign-in-nav-btn" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white !important; padding: 0.45rem 1.1rem; border-radius: 9999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3); transition: all 0.2s ease;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Sign In</span>
+          </a>
+        <% } %>
+        <div id="user-button"></div>
+      </div>
     </div>
   </nav>
 
@@ -299,7 +330,21 @@
         cards.forEach(card => card.classList.add('reveal'));
       }, 0);
 
-      // Initialize Clerk UI
+      // User Profile Dropdown Toggle
+      const userMenuBtn = document.getElementById('user-menu-btn');
+      const userMenuDropdown = document.getElementById('user-menu-dropdown');
+      if (userMenuBtn && userMenuDropdown) {
+        userMenuBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isVisible = userMenuDropdown.style.display === 'block';
+          userMenuDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+        document.addEventListener('click', () => {
+          userMenuDropdown.style.display = 'none';
+        });
+      }
+
+      // Initialize Clerk UI (if Clerk keys are provided)
       <% if (typeof clerkPublishableKey !== 'undefined' && clerkPublishableKey) { %>
       const initClerk = async () => {
         if (window.Clerk) {
@@ -312,7 +357,7 @@
               if (userButtonEl) window.Clerk.mountUserButton(userButtonEl);
               if (signInBtnEl) signInBtnEl.style.display = 'none';
             } else {
-              if (signInBtnEl) signInBtnEl.style.display = 'block';
+              if (signInBtnEl) signInBtnEl.style.display = 'inline-flex';
             }
           } catch (error) {
             console.error('Error loading Clerk:', error);
@@ -320,7 +365,6 @@
         }
       };
 
-      // Check if Clerk is loaded, else wait
       if (window.Clerk) {
         initClerk();
       } else {
@@ -333,6 +377,19 @@
       }
       <% } %>
     });
+
+    // Global Logout Handler (works with both built-in session and Clerk)
+    window.handleLogout = async function() {
+      try {
+        if (window.Clerk && window.Clerk.signOut) {
+          await window.Clerk.signOut();
+        }
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch (e) {
+        console.error('Logout error:', e);
+      }
+      window.location.href = '/';
+    };
   </script>
 
   <% if (typeof currentPath==='undefined' || (currentPath !=='/tts' && currentPath !=='/frequency' && currentPath

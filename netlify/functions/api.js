@@ -1,6 +1,18 @@
 const serverless = require('serverless-http');
 const app = require('../../index');
 
+// Netlify Serverless Function handler with complete binary support for audio, images, PDFs, and ZIPs
 module.exports.handler = serverless(app, {
-    binary: ['image/png', 'image/jpeg', 'image/jpg', 'audio/mpeg']
+    binary: [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/webp',
+        'image/svg+xml',
+        'audio/mpeg',
+        'audio/mp3',
+        'application/pdf',
+        'application/zip',
+        'application/octet-stream'
+    ]
 });

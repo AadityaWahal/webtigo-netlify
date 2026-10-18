@@ -2,6 +2,7 @@ const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const multer = require('multer');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const fs = require('fs').promises; // Use native fs promises
 const fsSync = require('fs');      // Use native sync fs for ensuring dirs
@@ -11,37 +12,44 @@ const QRCode = require('qrcode');
 const gTTS = require('gtts');
 const { clerkMiddleware } = require('@clerk/express');
 
+// Safe path resolution helper across local dev, Docker, and Netlify AWS Lambda serverless functions
+const resolveAppPath = (...subpaths) => {
+    const candidates = [
+        path.join(__dirname, ...subpaths),
+        path.join(process.cwd(), ...subpaths),
+        process.env.LAMBDA_TASK_ROOT ? path.join(process.env.LAMBDA_TASK_ROOT, ...subpaths) : null
+    ].filter(Boolean);
+
+    for (const cand of candidates) {
+        if (fsSync.existsSync(cand)) {
+            return cand;
+        }
+    }
+    return path.join(process.cwd(), ...subpaths);
+};
+
 // Load environment variables (Prioritize .env.local)
 const resultLocal = require('dotenv').config({ path: '.env.local' });
 if (resultLocal.error) {
-    console.log("⚠️ .env.local not found, trying default .env");
     require('dotenv').config();
-} else {
-    console.log("✅ Loaded config from .env.local");
-}
-
-// Debugging: Log if keys are missing (without revealing secrets)
-// Vercel might not have the file, so checking process.env is crucial
-if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
-    console.error("❌ ERROR: Clerk Keys are missing! Check Vercel Environment Variables or .env.local");
-} else {
-    console.log("✅ Clerk Configuration Loaded");
 }
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
 
 // Middleware
 app.use(cors());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Dynamic SEO Sitemap and Robots endpoints (registered before static files so they intercept them)
 app.get('/robots.txt', async (req, res) => {
     try {
-        const robotsPath = path.join(process.cwd(), 'seo', 'robots.txt');
+        const robotsPath = resolveAppPath('seo', 'robots.txt');
         let content = await fs.readFile(robotsPath, 'utf8');
-        const host = req.headers.host;
+        const host = req.headers.host || 'webtigo.netlify.app';
         content = content.replace(/webtigo\.vercel\.app/g, host);
         res.header('Content-Type', 'text/plain');
         res.send(content);
@@ -53,9 +61,9 @@ app.get('/robots.txt', async (req, res) => {
 
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        const sitemapPath = path.join(process.cwd(), 'seo', 'sitemap.xml');
+        const sitemapPath = resolveAppPath('seo', 'sitemap.xml');
         let content = await fs.readFile(sitemapPath, 'utf8');
-        const host = req.headers.host;
+        const host = req.headers.host || 'webtigo.netlify.app';
         content = content.replace(/webtigo\.vercel\.app/g, host);
         res.header('Content-Type', 'application/xml');
         res.send(content);
@@ -67,9 +75,9 @@ app.get('/sitemap.xml', async (req, res) => {
 
 app.get('/sitemap1.xml', async (req, res) => {
     try {
-        const sitemapPath = path.join(process.cwd(), 'seo', 'sitemap1.xml');
+        const sitemapPath = resolveAppPath('seo', 'sitemap1.xml');
         let content = await fs.readFile(sitemapPath, 'utf8');
-        const host = req.headers.host;
+        const host = req.headers.host || 'webtigo.netlify.app';
         content = content.replace(/webtigo\.vercel\.app/g, host);
         res.header('Content-Type', 'application/xml');
         res.send(content);
@@ -79,45 +87,8 @@ app.get('/sitemap1.xml', async (req, res) => {
     }
 });
 
-// Explicit absolute path for static files
-app.use(express.static(path.join(process.cwd(), 'public')));
-
-// Clerk Middleware (MUST be before routes that need auth)
-// Wrap in a key check to prevent server errors (500) if environment variables are not configured in Vercel.
-const isNetlify = true;
-const hasClerkKeys = !isNetlify && !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY) && !!process.env.CLERK_SECRET_KEY;
-
-if (hasClerkKeys) {
-    app.use(clerkMiddleware({
-        publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY,
-        secretKey: process.env.CLERK_SECRET_KEY
-    }));
-} else {
-    if (isNetlify) {
-        console.log("ℹ️ Clerk auth middleware bypassed on Netlify to prevent redirect loops.");
-    } else {
-        console.warn("⚠️ WARNING: Clerk Keys are missing. Auth middleware is disabled, and users will not be able to sign in.");
-    }
-    // Fallback middleware to mock auth object so templates don't crash
-    app.use((req, res, next) => {
-        req.auth = { userId: null };
-        next();
-    });
-}
-
-// Templating Engine (Next.js-style)
-app.use(expressLayouts);
-// Explicit absolute path for views
-app.set('views', path.join(process.cwd(), 'views'));
-app.set('view engine', 'ejs');
-app.set('layout', './layout'); // looks for views/layout.ejs
-
-const os = require('os');
-// File Upload Config (Memory storage for Serverless robustness)
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit per file
-});
+// Explicit absolute path for static files (works in serverless and standalone)
+app.use(express.static(resolveAppPath('public')));
 
 // Helper to extract Clerk Frontend API domain from publishable key
 function getClerkFrontendApi(publishableKey) {
@@ -130,25 +101,79 @@ function getClerkFrontendApi(publishableKey) {
         const decoded = Buffer.from(base64, 'base64').toString('utf-8');
         return decoded.replace(/\$$/, '');
     } catch (e) {
-        console.error("Error decoding Clerk publishable key:", e);
         return null;
     }
 }
 
-// --- LEGACY REDIRECTS (SEO) ---
-// Global View Variables
+// Clerk Authentication Middleware setup
+const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY;
+const clerkSecKey = process.env.CLERK_SECRET_KEY;
+const hasClerkKeys = !!(clerkPubKey && clerkSecKey);
+
+if (hasClerkKeys) {
+    app.use(clerkMiddleware({
+        publishableKey: clerkPubKey,
+        secretKey: clerkSecKey
+    }));
+} else {
+    // Fallback middleware to mock auth object so templates don't crash
+    app.use((req, res, next) => {
+        req.auth = { userId: null };
+        next();
+    });
+}
+
+// Templating Engine setup
+app.use(expressLayouts);
+app.set('views', resolveAppPath('views'));
+app.set('view engine', 'ejs');
+app.set('layout', './layout');
+
+const os = require('os');
+// File Upload Config (Memory storage for Serverless robustness)
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit per file
+});
+
+// Unified User Session & View Variables (combines Clerk & serverless cookie session)
 app.use((req, res, next) => {
+    let currentUser = null;
+
+    // 1. Check for cookie session (built-in auth)
+    if (req.cookies && req.cookies.webtigo_user) {
+        try {
+            currentUser = typeof req.cookies.webtigo_user === 'string'
+                ? JSON.parse(req.cookies.webtigo_user)
+                : req.cookies.webtigo_user;
+        } catch (e) {
+            currentUser = null;
+        }
+    }
+
+    // 2. Check if Clerk authenticated
+    if (!currentUser && req.auth && req.auth.userId) {
+        currentUser = {
+            id: req.auth.userId,
+            name: 'Clerk Member',
+            email: 'clerk-user',
+            role: 'member',
+            provider: 'clerk'
+        };
+    }
+
+    req.user = currentUser;
+    res.locals.user = currentUser;
     res.locals.currentPath = req.path;
-    res.locals.clerkPublishableKey = isNetlify ? null : (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY);
-    res.locals.clerkFrontendApi = isNetlify ? null : getClerkFrontendApi(res.locals.clerkPublishableKey);
-    res.locals.auth = req.auth; // Available from clerkMiddleware
+    res.locals.clerkPublishableKey = clerkPubKey || null;
+    res.locals.clerkFrontendApi = getClerkFrontendApi(clerkPubKey);
+    res.locals.auth = req.auth || { userId: currentUser ? currentUser.id : null };
 
     // Determine protocol and host dynamically for canonical URLs
     const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
-    const host = req.headers.host;
+    const host = req.headers.host || 'localhost:3000';
     res.locals.siteUrl = `${protocol}://${host}`;
 
-    // Redirects were removed as they are no longer needed
     next();
 });
 
@@ -475,15 +500,110 @@ app.post('/api/speak', upload.none(), async (req, res) => {
 
 
 
-// 5. Static Sitemaps fallback check (if not in public dir)
-// Express already serves static files from 'public' via express.static.
-// We remove the dynamic routes so you can place sitemap.xml and sitemap1.xml directly in the 'public' folder.
+// 5. Authentication API Routes (Serverless & Local compatible)
+app.post('/api/auth/login', (req, res) => {
+    try {
+        const { email, password, mode } = req.body || {};
+
+        if (mode === 'demo' || mode === 'guest') {
+            const demoUser = {
+                id: 'user_' + uuidv4().substring(0, 8),
+                name: mode === 'demo' ? 'Pro Creator' : 'Guest Member',
+                email: mode === 'demo' ? 'member@webtigo.app' : 'guest@webtigo.app',
+                role: 'premium'
+            };
+            res.cookie('webtigo_user', JSON.stringify(demoUser), {
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                httpOnly: false,
+                sameSite: 'lax',
+                path: '/'
+            });
+            return res.json({ success: true, user: demoUser });
+        }
+
+        if (!email || !password) {
+            return res.status(400).json({ success: false, error: 'Email and password are required.' });
+        }
+
+        if (password.length < 4) {
+            return res.status(400).json({ success: false, error: 'Password must be at least 4 characters.' });
+        }
+
+        const baseName = email.split('@')[0];
+        const displayName = baseName.charAt(0).toUpperCase() + baseName.slice(1);
+
+        const user = {
+            id: 'user_' + uuidv4().substring(0, 8),
+            name: displayName,
+            email: email.trim().toLowerCase(),
+            role: 'member'
+        };
+
+        res.cookie('webtigo_user', JSON.stringify(user), {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: false,
+            sameSite: 'lax',
+            path: '/'
+        });
+
+        return res.json({ success: true, user });
+    } catch (err) {
+        console.error('Login error:', err);
+        return res.status(500).json({ success: false, error: 'Login failed' });
+    }
+});
+
+app.post('/api/auth/signup', (req, res) => {
+    try {
+        const { name, email, password } = req.body || {};
+
+        if (!email || !password) {
+            return res.status(400).json({ success: false, error: 'Email and password are required.' });
+        }
+
+        if (password.length < 4) {
+            return res.status(400).json({ success: false, error: 'Password must be at least 4 characters.' });
+        }
+
+        const displayName = name && name.trim() ? name.trim() : email.split('@')[0];
+
+        const user = {
+            id: 'user_' + uuidv4().substring(0, 8),
+            name: displayName,
+            email: email.trim().toLowerCase(),
+            role: 'member'
+        };
+
+        res.cookie('webtigo_user', JSON.stringify(user), {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: false,
+            sameSite: 'lax',
+            path: '/'
+        });
+
+        return res.json({ success: true, user });
+    } catch (err) {
+        console.error('Signup error:', err);
+        return res.status(500).json({ success: false, error: 'Registration failed' });
+    }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+    res.clearCookie('webtigo_user', { path: '/' });
+    return res.json({ success: true });
+});
+
+app.get('/api/auth/me', (req, res) => {
+    return res.json({
+        authenticated: !!req.user,
+        user: req.user || null
+    });
+});
 
 // Start Server
 if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-        console.log(`http://localhost:${PORT}`);
+    app.listen(PORT, HOST, () => {
+        console.log(`Server running on http://${HOST}:${PORT}`);
     });
 }
 

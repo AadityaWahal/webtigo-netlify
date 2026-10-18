@@ -1,12 +1,12 @@
 [build]
-  command = ""
+  command = "npm run build"
   functions = "netlify/functions"
   publish = "public"
 
 [functions]
-  included_files = ["views/**", "seo/**"]
+  included_files = ["views/**", "seo/**", "public/**"]
   node_bundler = "esbuild"
-  external_node_modules = ["ejs", "express-ejs-layouts"]
+  external_node_modules = ["ejs", "express-ejs-layouts", "sharp", "cookie-parser"]
 
 [[redirects]]
   from = "/*"
