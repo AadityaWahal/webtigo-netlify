@@ -94,6 +94,19 @@ app.get('/sitemap1.xml', async (req, res) => {
     }
 });
 
+// Favicon and Manifest dedicated endpoints for Googlebot and browser crawlers
+app.get('/favicon.ico', (req, res) => {
+    res.setHeader('Content-Type', 'image/x-icon');
+    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    res.sendFile(resolveAppPath('public', 'favicon.ico'));
+});
+
+app.get('/site.webmanifest', (req, res) => {
+    res.setHeader('Content-Type', 'application/manifest+json');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.sendFile(resolveAppPath('public', 'site.webmanifest'));
+});
+
 // Explicit absolute path for static files with caching for fast repeat loads
 app.use(express.static(resolveAppPath('public'), {
     maxAge: '7d',
@@ -181,7 +194,7 @@ app.use((req, res, next) => {
 
     // Determine protocol and host dynamically for canonical URLs
     const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
-    const host = req.headers.host || 'localhost:3000';
+    const host = req.headers.host || 'webtigo.netlify.app';
     res.locals.siteUrl = `${protocol}://${host}`;
 
     next();

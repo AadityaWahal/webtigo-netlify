@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /ads.txt
+Allow: /favicon.ico
+Allow: /favicon*.png
+Allow: /logo.png
+Allow: /apple-touch-icon.png
+Allow: /site.webmanifest
+
+Sitemap: https://webtigo.netlify.app/sitemap.xml
