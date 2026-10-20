@@ -474,6 +474,162 @@
     };
   </script>
 
+  <!-- Audio Section: UI Hover Sound and Background Music -->
+  <audio id="hover-sound" preload="auto">
+    <source src="/audio/hover.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    (function () {
+      // Audio Section: Cursor Hover Sound Effect for Buttons and Service Cards Options
+      const HOVER_AUDIO_SRC = '/audio/hover.mp3';
+      let audioCtx = null;
+      let audioBuffer = null;
+      let isBufferDecoded = false;
+      let lastPlayTime = 0;
+      const MIN_INTERVAL_MS = 60; // Debounce fast pointer movements across boundaries
+
+      // HTML5 Audio Pool for immediate zero-config playback
+      const POOL_SIZE = 4;
+      const audioPool = [];
+      for (let i = 0; i < POOL_SIZE; i++) {
+        const sound = new Audio(HOVER_AUDIO_SRC);
+        sound.volume = 0.35;
+        sound.preload = 'auto';
+        audioPool.push(sound);
+      }
+      let poolIndex = 0;
+
+      // Web Audio API buffer initialization for zero-latency multi-instance playback
+      function initWebAudio() {
+        if (audioBuffer || isBufferDecoded) return;
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          if (!audioCtx) {
+            audioCtx = new AudioContextClass();
+          }
+          fetch(HOVER_AUDIO_SRC)
+            .then(function (res) { return res.arrayBuffer(); })
+            .then(function (buffer) { return audioCtx.decodeAudioData(buffer); })
+            .then(function (decoded) {
+              audioBuffer = decoded;
+              isBufferDecoded = true;
+            })
+            .catch(function () {});
+        } catch (e) {}
+      }
+
+      // Resume suspended AudioContext upon user gesture
+      function unlockAudio() {
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(function () {});
+        }
+      }
+      ['pointerdown', 'keydown', 'click'].forEach(function (evt) {
+        window.addEventListener(evt, unlockAudio, { passive: true, once: false });
+      });
+
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(initWebAudio);
+      } else {
+        setTimeout(initWebAudio, 400);
+      }
+
+      function playHoverSound() {
+        const now = Date.now();
+        if (now - lastPlayTime < MIN_INTERVAL_MS) return;
+        lastPlayTime = now;
+
+        // 1. Try Web Audio API if buffer is ready
+        if (audioCtx && audioBuffer) {
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(function () {});
+          }
+          if (audioCtx.state === 'running') {
+            try {
+              const source = audioCtx.createBufferSource();
+              source.buffer = audioBuffer;
+              const gainNode = audioCtx.createGain();
+              gainNode.gain.value = 0.35;
+              source.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+              source.start(0);
+              return;
+            } catch (err) {}
+          }
+        }
+
+        // 2. HTML5 Audio Pool fallback
+        try {
+          const sound = audioPool[poolIndex];
+          poolIndex = (poolIndex + 1) % POOL_SIZE;
+          sound.currentTime = 0;
+          const promise = sound.play();
+          if (promise !== undefined) {
+            promise.catch(function () {});
+          }
+        } catch (err) {}
+      }
+
+      // Selectors matching any button and service cards / service card options
+      const HOVER_SELECTORS = [
+        'button',
+        '.primary-btn',
+        '.secondary-btn',
+        '.btn',
+        '.dropdown-btn',
+        '.mobile-toggle-btn',
+        '.sign-in-nav-btn',
+        '.quick-demo-btn',
+        '.mode-btn',
+        '.tab-btn',
+        '[role="button"]',
+        'input[type="button"]',
+        'input[type="submit"]',
+        'input[type="reset"]',
+        '.tool-card',
+        '.tool-link',
+        '.blog-link-inline',
+        '.polyhedra-launch-link',
+        '.dropdown-content a',
+        '.dropdown-group a',
+        '.nav-links a',
+        '.mobile-drawer a',
+        '.blog-card',
+        '.video-card'
+      ].join(', ');
+
+      let currentActiveTarget = null;
+      const hoverEvent = window.PointerEvent ? 'pointerover' : 'mouseover';
+
+      document.addEventListener(hoverEvent, function (e) {
+        // Only trigger on cursor hover, not touchscreen taps
+        if (e.pointerType === 'touch') return;
+        if (!e.target || typeof e.target.closest !== 'function') return;
+
+        const target = e.target.closest(HOVER_SELECTORS);
+        if (!target) {
+          currentActiveTarget = null;
+          return;
+        }
+
+        // Avoid re-triggering while navigating inside the same interactive target
+        if (target === currentActiveTarget) return;
+
+        // Avoid re-triggering when moving from a child element back to its parent container
+        if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+
+        currentActiveTarget = target;
+        playHoverSound();
+      }, { passive: true });
+
+      document.addEventListener('mouseleave', function () {
+        currentActiveTarget = null;
+      });
+    })();
+  </script>
+
   <% if (typeof currentPath==='undefined' || (currentPath !=='/tts' && currentPath !=='/frequency' && currentPath
     !=='/frequency-detector' ) ) { %>
     <audio id="bg-music" loop preload="none">
