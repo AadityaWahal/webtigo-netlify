@@ -10,43 +10,42 @@
     content="<%= typeof keywords !== 'undefined' ? keywords : 'pdf tools, image compressor, qr code generator, online tools, free web tools' %>">
   <meta name="author" content="Member of Mutivers (Aaditya Wahal)">
   <!-- Favicons & Google Search Icons (Multiple of 48px compliant) -->
-  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
   <link rel="icon" type="image/png" sizes="1024x1024" href="/logo.png">
-  <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Webtigo">
-  <meta property="og:url" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.netlify.app' %>/<%= typeof currentPath !== 'undefined' ? currentPath.replace(/^\//, '') : '' %>">
+  <meta property="og:site_name" content="WebTigo">
+  <meta property="og:url" content="https://webtigo.netlify.app<%= typeof currentPath !== 'undefined' ? currentPath : '' %>">
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description"
     content="<%= typeof description !== 'undefined' ? description : 'Free premium web tools for everyday tasks. PDF, Images, Audio, and Text utilities.' %>">
-  <meta property="og:image" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.netlify.app' %>/logo.png">
+  <meta property="og:image" content="https://webtigo.netlify.app/logo.png">
   <meta property="og:image:width" content="1024">
   <meta property="og:image:height" content="1024">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.netlify.app' %>/<%= typeof currentPath !== 'undefined' ? currentPath.replace(/^\//, '') : '' %>">
+  <meta property="twitter:url" content="https://webtigo.netlify.app<%= typeof currentPath !== 'undefined' ? currentPath : '' %>">
   <meta property="twitter:title" content="<%= title %>">
   <meta property="twitter:description"
     content="<%= typeof description !== 'undefined' ? description : 'Free premium web tools for everyday tasks.' %>">
-  <meta property="twitter:image" content="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.netlify.app' %>/logo.png">
+  <meta property="twitter:image" content="https://webtigo.netlify.app/logo.png">
   <meta name="twitter:creator" content="@webtigo">
 
   <!-- Search Engine Directives & App Identity -->
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="theme-color" content="#0f172a">
-  <meta name="application-name" content="Webtigo">
-  <meta name="apple-mobile-web-app-title" content="Webtigo">
+  <meta name="application-name" content="WebTigo">
+  <meta name="apple-mobile-web-app-title" content="WebTigo">
   <meta name="msapplication-TileColor" content="#0f172a">
   <meta name="msapplication-TileImage" content="/favicon-192x192.png">
-  <link rel="canonical" href="<%= typeof siteUrl !== 'undefined' ? siteUrl : 'https://webtigo.netlify.app' %><%= typeof currentPath !== 'undefined' ? currentPath : '' %>">
+  <link rel="canonical" href="https://webtigo.netlify.app<%= typeof currentPath !== 'undefined' && currentPath !== '/' ? currentPath : '/' %>">
 
   <!-- Schema.org JSON-LD for Google Search Site Name & Sitelinks -->
   <script type="application/ld+json">
@@ -55,25 +54,25 @@
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "<%= siteUrl %>/#website",
-        "url": "<%= siteUrl %>/",
-        "name": "Webtigo",
+        "@id": "https://webtigo.netlify.app/#website",
+        "url": "https://webtigo.netlify.app/",
+        "name": "WebTigo",
         "alternateName": [
-          "WebTigo",
+          "Webtigo",
+          "WebTigo Tools",
           "webtigo.netlify.app",
-          "Webtigo Tools",
-          "Webtigo Free Online Tools"
+          "WebTigo Free Online Tools"
         ],
         "description": "Free online tools: Convert PDF to images, compress images, generate QR codes, and convert text to speech.",
         "publisher": {
           "@type": "Organization",
-          "@id": "<%= siteUrl %>/#organization",
-          "name": "Webtigo",
-          "alternateName": "WebTigo",
-          "url": "<%= siteUrl %>/",
+          "@id": "https://webtigo.netlify.app/#organization",
+          "name": "WebTigo",
+          "alternateName": "Webtigo",
+          "url": "https://webtigo.netlify.app/",
           "logo": {
             "@type": "ImageObject",
-            "url": "<%= siteUrl %>/logo.png",
+            "url": "https://webtigo.netlify.app/logo.png",
             "width": 1024,
             "height": 1024
           },
@@ -83,19 +82,19 @@
         },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "<%= siteUrl %>/?q={search_term_string}",
+          "target": "https://webtigo.netlify.app/?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "Organization",
-        "@id": "<%= siteUrl %>/#organization",
-        "name": "Webtigo",
-        "alternateName": "WebTigo",
-        "url": "<%= siteUrl %>/",
+        "@id": "https://webtigo.netlify.app/#organization",
+        "name": "WebTigo",
+        "alternateName": "Webtigo",
+        "url": "https://webtigo.netlify.app/",
         "logo": {
           "@type": "ImageObject",
-          "url": "<%= siteUrl %>/logo.png",
+          "url": "https://webtigo.netlify.app/logo.png",
           "width": 1024,
           "height": 1024
         },
@@ -194,9 +193,9 @@
   <div class="background-container"></div>
   <nav class="navbar">
     <div style="display: flex; align-items: center; gap: 10px;">
-      <a href="/" class="navbar-brand">
-        <img src="/logo.png" alt="Webtigo Logo" width="36" height="36" style="height: 36px; width: auto;" loading="eager">
-        <span class="logo">Webtigo</span>
+      <a href="/" class="navbar-brand" itemscope itemtype="https://schema.org/Brand">
+        <img src="/logo.png" alt="WebTigo Logo" width="36" height="36" style="height: 36px; width: auto;" loading="eager" itemprop="logo">
+        <span class="logo" itemprop="name">WebTigo</span>
       </a>
     </div>
 

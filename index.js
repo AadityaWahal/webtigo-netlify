@@ -101,6 +101,24 @@ app.get('/favicon.ico', (req, res) => {
     res.sendFile(resolveAppPath('public', 'favicon.ico'));
 });
 
+app.get('/favicon-48x48.png', (req, res) => {
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    res.sendFile(resolveAppPath('public', 'favicon-48x48.png'));
+});
+
+app.get('/favicon-96x96.png', (req, res) => {
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    res.sendFile(resolveAppPath('public', 'favicon-96x96.png'));
+});
+
+app.get('/favicon-192x192.png', (req, res) => {
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    res.sendFile(resolveAppPath('public', 'favicon-192x192.png'));
+});
+
 app.get('/site.webmanifest', (req, res) => {
     res.setHeader('Content-Type', 'application/manifest+json');
     res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -295,6 +313,14 @@ app.get('/blog/somi-wahal', (req, res) => {
         title: 'Somi Wahal: Travel Blogger, Writer & Digital Creator - Webtigo Blog',
         description: 'Discover the journey of Somi Wahal, a prominent travel blogger and digital creator. Learn about her influence and creative work in the digital space.',
         keywords: 'Somi Wahal, travel blogger, digital creator, social media strategist, content creator'
+    });
+});
+
+app.get('/blog/noble-polyhedron', (req, res) => {
+    res.render('pages/blog-noble-polyhedron', {
+        title: 'The Story Of Noble Polyhedron: Exploring The Hidden Realm Of Absolute Symmetry - Webtigo Blog',
+        description: 'Explore the fascinating world of noble polyhedra: isohedral and isogonal 3D geometries, Kepler-Poinsot star polyhedra, crown stephanoids, and noble toroids.',
+        keywords: 'noble polyhedron, noble polyhedra, isohedral, isogonal, platonic solids, kepler poinsot, stephanoids, infinite apeirohedron, 3d geometry, webtigo blog'
     });
 });
 
