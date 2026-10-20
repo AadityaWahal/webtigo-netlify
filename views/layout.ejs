@@ -282,22 +282,24 @@
     </div>
   </nav>
 
-  <!-- Mobile Dropdown Navigation Drawer -->
+  <!-- Mobile Dropdown Navigation Drawer: Streamlined (Home, Noble Polyhedra 3D, Blog, Social Media, Premium) -->
   <div class="mobile-menu-drawer" id="mobile-drawer">
-    <a href="/">🏠 Home</a>
-    <a href="/compressor">📉 Image Compressor</a>
-    <a href="/resizer">📐 Image Resizer</a>
-    <a href="/images-to-pdf">📑 Images to PDF</a>
-    <a href="/pdf-to-images">🖼️ PDF to Images</a>
-    <a href="/tts">🔊 Text to Speech</a>
-    <a href="/case-converter">🔤 Case Converter</a>
-    <a href="/frequency">〰️ Tone Generator</a>
-    <a href="/frequency-detector">🎙️ Pitch Detector</a>
-    <a href="/qrcode">🔳 QR Code Generator</a>
-    <a href="/blog">📖 Blog & Guides</a>
-    <a href="/social-media">🌐 Social Media</a>
-    <a href="/signin" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2)); border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; font-weight: 600;">
-      🔑 Sign In / Member Access <span>&rarr;</span>
+    <a href="/" style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="display: flex; align-items: center; gap: 10px;">🏠 Home</span>
+    </a>
+    <a href="https://noblepolyhedra.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: #c4b5fd; border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.08); display: flex; align-items: center; justify-content: space-between;">
+      <span style="display: flex; align-items: center; gap: 10px;">💎 Noble Polyhedra 3D</span>
+      <span style="font-size: 0.75rem; background: rgba(168, 85, 247, 0.25); color: #e9d5ff; padding: 2px 8px; border-radius: 9999px; font-weight: 600;">3D ↗</span>
+    </a>
+    <a href="/blog" style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="display: flex; align-items: center; gap: 10px;">📖 Blog</span>
+    </a>
+    <a href="/social-media" style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="display: flex; align-items: center; gap: 10px;">🌐 Social Media</span>
+    </a>
+    <a href="https://webtigo-premium.vercel.app/" target="_blank" rel="noopener noreferrer" class="premium-link" style="border-color: rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.08); display: flex; align-items: center; justify-content: space-between;">
+      <span style="display: flex; align-items: center; gap: 10px;">⭐ WebTigo Premium</span>
+      <span style="font-size: 0.75rem; background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">Pro ↗</span>
     </a>
   </div>
 
@@ -332,6 +334,27 @@
             </svg>
             YouTube Channel
           </a>
+        </div>
+
+        <!-- Option in Footer to Play Background Sound -->
+        <div class="footer-audio-player" style="margin-top: 1.25rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 0.75rem 1rem; max-width: 320px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+              <div id="footer-music-icon-wrap" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; color: #60a5fa; transition: all 0.3s ease;">
+                🎵
+              </div>
+              <div style="min-width: 0;">
+                <div style="font-size: 0.85rem; font-weight: 600; color: #f8fafc; line-height: 1.2;">Background Sound</div>
+                <div id="footer-music-status" style="font-size: 0.72rem; color: #94a3b8; line-height: 1.2; margin-top: 2px;">Off &bull; Click to play</div>
+              </div>
+            </div>
+            <button type="button" id="footer-music-toggle-btn" class="btn" aria-label="Toggle background music" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; border: none; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); transition: all 0.2s ease;">
+              <svg id="footer-music-btn-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span id="footer-music-btn-label">Play</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="footer-column">
@@ -391,6 +414,11 @@
           if (!mobileDrawer.contains(e.target) && e.target !== mobileMenuToggle) {
             mobileDrawer.classList.remove('open');
           }
+        });
+        mobileDrawer.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            mobileDrawer.classList.remove('open');
+          });
         });
       }
 
@@ -474,49 +502,70 @@
     };
   </script>
 
-  <!-- Audio Section: UI Hover Sound and Background Music -->
+  <!-- Audio Section: UI Hover & Click Sounds and Background Music -->
   <audio id="hover-sound" preload="auto">
     <source src="/audio/hover.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="click-sound" preload="auto">
+    <source src="/audio/click.mp3" type="audio/mpeg">
   </audio>
 
   <script>
     (function () {
-      // Audio Section: Cursor Hover Sound Effect for Buttons and Service Cards Options
+      // Audio Section: Cursor Hover and Option Click Sound Effects
       const HOVER_AUDIO_SRC = '/audio/hover.mp3';
-      let audioCtx = null;
-      let audioBuffer = null;
-      let isBufferDecoded = false;
-      let lastPlayTime = 0;
-      const MIN_INTERVAL_MS = 60; // Debounce fast pointer movements across boundaries
+      const CLICK_AUDIO_SRC = '/audio/click.mp3';
 
-      // HTML5 Audio Pool for immediate zero-config playback
+      let audioCtx = null;
+      let hoverAudioBuffer = null;
+      let clickAudioBuffer = null;
+      let lastHoverPlayTime = 0;
+      let lastClickPlayTime = 0;
+      const MIN_HOVER_INTERVAL_MS = 60; // Debounce rapid pointer movement
+      const MIN_CLICK_INTERVAL_MS = 70; // Debounce double-trigger / label-input bubbling
+
+      // HTML5 Audio Pools for immediate zero-config playback fallback
       const POOL_SIZE = 4;
-      const audioPool = [];
+      const hoverPool = [];
+      const clickPool = [];
       for (let i = 0; i < POOL_SIZE; i++) {
-        const sound = new Audio(HOVER_AUDIO_SRC);
-        sound.volume = 0.35;
-        sound.preload = 'auto';
-        audioPool.push(sound);
+        const hSound = new Audio(HOVER_AUDIO_SRC);
+        hSound.volume = 0.35;
+        hSound.preload = 'auto';
+        hoverPool.push(hSound);
+
+        const cSound = new Audio(CLICK_AUDIO_SRC);
+        cSound.volume = 0.4;
+        cSound.preload = 'auto';
+        clickPool.push(cSound);
       }
-      let poolIndex = 0;
+      let hoverPoolIndex = 0;
+      let clickPoolIndex = 0;
 
       // Web Audio API buffer initialization for zero-latency multi-instance playback
       function initWebAudio() {
-        if (audioBuffer || isBufferDecoded) return;
         try {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (!AudioContextClass) return;
           if (!audioCtx) {
             audioCtx = new AudioContextClass();
           }
-          fetch(HOVER_AUDIO_SRC)
-            .then(function (res) { return res.arrayBuffer(); })
-            .then(function (buffer) { return audioCtx.decodeAudioData(buffer); })
-            .then(function (decoded) {
-              audioBuffer = decoded;
-              isBufferDecoded = true;
-            })
-            .catch(function () {});
+
+          if (!hoverAudioBuffer) {
+            fetch(HOVER_AUDIO_SRC)
+              .then(function (res) { return res.arrayBuffer(); })
+              .then(function (buffer) { return audioCtx.decodeAudioData(buffer); })
+              .then(function (decoded) { hoverAudioBuffer = decoded; })
+              .catch(function () {});
+          }
+
+          if (!clickAudioBuffer) {
+            fetch(CLICK_AUDIO_SRC)
+              .then(function (res) { return res.arrayBuffer(); })
+              .then(function (buffer) { return audioCtx.decodeAudioData(buffer); })
+              .then(function (decoded) { clickAudioBuffer = decoded; })
+              .catch(function () {});
+          }
         } catch (e) {}
       }
 
@@ -538,18 +587,18 @@
 
       function playHoverSound() {
         const now = Date.now();
-        if (now - lastPlayTime < MIN_INTERVAL_MS) return;
-        lastPlayTime = now;
+        if (now - lastHoverPlayTime < MIN_HOVER_INTERVAL_MS) return;
+        lastHoverPlayTime = now;
 
         // 1. Try Web Audio API if buffer is ready
-        if (audioCtx && audioBuffer) {
+        if (audioCtx && hoverAudioBuffer) {
           if (audioCtx.state === 'suspended') {
             audioCtx.resume().catch(function () {});
           }
           if (audioCtx.state === 'running') {
             try {
               const source = audioCtx.createBufferSource();
-              source.buffer = audioBuffer;
+              source.buffer = hoverAudioBuffer;
               const gainNode = audioCtx.createGain();
               gainNode.gain.value = 0.35;
               source.connect(gainNode);
@@ -562,8 +611,8 @@
 
         // 2. HTML5 Audio Pool fallback
         try {
-          const sound = audioPool[poolIndex];
-          poolIndex = (poolIndex + 1) % POOL_SIZE;
+          const sound = hoverPool[hoverPoolIndex];
+          hoverPoolIndex = (hoverPoolIndex + 1) % POOL_SIZE;
           sound.currentTime = 0;
           const promise = sound.play();
           if (promise !== undefined) {
@@ -572,7 +621,43 @@
         } catch (err) {}
       }
 
-      // Selectors matching any button and service cards / service card options
+      function playClickSound() {
+        const now = Date.now();
+        if (now - lastClickPlayTime < MIN_CLICK_INTERVAL_MS) return;
+        lastClickPlayTime = now;
+
+        // 1. Try Web Audio API if buffer is ready
+        if (audioCtx && clickAudioBuffer) {
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(function () {});
+          }
+          if (audioCtx.state === 'running') {
+            try {
+              const source = audioCtx.createBufferSource();
+              source.buffer = clickAudioBuffer;
+              const gainNode = audioCtx.createGain();
+              gainNode.gain.value = 0.4;
+              source.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+              source.start(0);
+              return;
+            } catch (err) {}
+          }
+        }
+
+        // 2. HTML5 Audio Pool fallback
+        try {
+          const sound = clickPool[clickPoolIndex];
+          clickPoolIndex = (clickPoolIndex + 1) % POOL_SIZE;
+          sound.currentTime = 0;
+          const promise = sound.play();
+          if (promise !== undefined) {
+            promise.catch(function () {});
+          }
+        } catch (err) {}
+      }
+
+      // Selectors matching any button and service cards / service card options for HOVER
       const HOVER_SELECTORS = [
         'button',
         '.primary-btn',
@@ -596,6 +681,8 @@
         '.dropdown-group a',
         '.nav-links a',
         '.mobile-drawer a',
+        '.mobile-menu-drawer a',
+        '#footer-music-toggle-btn',
         '.blog-card',
         '.video-card'
       ].join(', ');
@@ -627,30 +714,178 @@
       document.addEventListener('mouseleave', function () {
         currentActiveTarget = null;
       });
+
+      // Selectors matching options that perform an action/work when clicked
+      const OPTION_CLICK_SELECTORS = [
+        'button',
+        '.primary-btn',
+        '.secondary-btn',
+        '.btn',
+        '.dropdown-btn',
+        '.mobile-toggle-btn',
+        '.sign-in-nav-btn',
+        '.quick-demo-btn',
+        '.mode-btn',
+        '.tab-btn',
+        '[role="button"]',
+        'input[type="button"]',
+        'input[type="submit"]',
+        'input[type="reset"]',
+        'input[type="checkbox"]',
+        'input[type="radio"]',
+        'label',
+        'select',
+        'option',
+        'summary',
+        '[role="tab"]',
+        '[role="menuitem"]',
+        '[role="menuitemcheckbox"]',
+        '[role="menuitemradio"]',
+        '[role="option"]',
+        '[role="switch"]',
+        'a[href]',
+        '.tool-card',
+        '.tool-link',
+        '.blog-link-inline',
+        '.polyhedra-launch-link',
+        '.dropdown-content a',
+        '.dropdown-group a',
+        '.nav-links a',
+        '.mobile-drawer a',
+        '.mobile-menu-drawer a',
+        '#footer-music-toggle-btn',
+        '.blog-card',
+        '.video-card',
+        '[onclick]',
+        '[data-action]'
+      ].join(', ');
+
+      // Determine if a click is on an active option that performs work (not random background or dead space)
+      function isWorkOption(el) {
+        if (!el || typeof el.closest !== 'function') return false;
+
+        // Exclude text typing inputs & textareas (clicking to position cursor/focus is not clicking an option)
+        if (el.closest('input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea, [contenteditable="true"]')) {
+          return false;
+        }
+
+        const option = el.closest(OPTION_CLICK_SELECTORS);
+        if (!option) return false;
+
+        // Ignore disabled elements or disabled fieldset descendants
+        if (option.matches(':disabled, [disabled], [aria-disabled="true"], .disabled') ||
+            option.closest(':disabled, [disabled], [aria-disabled="true"], .disabled')) {
+          return false;
+        }
+
+        // If label, verify it is associated with an input or contains an option
+        if (option.tagName === 'LABEL') {
+          const hasTargetInput = option.htmlFor || option.querySelector('input, select');
+          if (!hasTargetInput) return false;
+        }
+
+        // If anchor with href="#" and no onclick/action class, ignore empty placeholder anchors
+        if (option.tagName === 'A') {
+          const href = option.getAttribute('href');
+          const hasAction = option.getAttribute('onclick') ||
+            option.getAttribute('role') === 'button' ||
+            option.classList.contains('primary-btn') ||
+            option.classList.contains('secondary-btn') ||
+            option.classList.contains('btn') ||
+            option.classList.contains('dropdown-btn');
+          if ((!href || href === '#' || href.startsWith('javascript:void(0)')) && !hasAction) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      // Listen in capture phase so click audio plays immediately even if event propagation is stopped by child components
+      document.addEventListener('click', function (e) {
+        if (!e.target) return;
+        if (isWorkOption(e.target)) {
+          playClickSound();
+        }
+      }, true);
+
+      // Also support change events on <select> dropdown options
+      document.addEventListener('change', function (e) {
+        if (e.target && (e.target.tagName === 'SELECT' || e.target.type === 'radio' || e.target.type === 'checkbox')) {
+          playClickSound();
+        }
+      }, true);
     })();
   </script>
 
-  <% if (typeof currentPath==='undefined' || (currentPath !=='/tts' && currentPath !=='/frequency' && currentPath
-    !=='/frequency-detector' ) ) { %>
-    <audio id="bg-music" loop preload="none">
-      <source src="/audio/background.mp3" type="audio/mpeg">
-    </audio>
-    <script>
-      // Audio lazy-initialization on first intentional user click
-      document.addEventListener('DOMContentLoaded', function () {
-        var audio = document.getElementById('bg-music');
-        if (audio) {
-          audio.volume = 0.35;
-          const playAudioOnce = () => {
-            audio.play().then(() => {
-              document.removeEventListener('click', playAudioOnce);
-            }).catch(() => {});
-          };
-          document.addEventListener('click', playAudioOnce, { once: true });
+  <!-- Background Music Section: Controlled exclusively via Footer Option (NO auto-play on visit or click) -->
+  <audio id="bg-music" loop preload="none">
+    <source src="/audio/background.mp3" type="audio/mpeg">
+  </audio>
+  <script>
+    (function () {
+      var audio = document.getElementById('bg-music');
+      var toggleBtn = document.getElementById('footer-music-toggle-btn');
+      var statusText = document.getElementById('footer-music-status');
+      var iconWrap = document.getElementById('footer-music-icon-wrap');
+      var btnLabel = document.getElementById('footer-music-btn-label');
+      var btnIcon = document.getElementById('footer-music-btn-icon');
+
+      if (!audio || !toggleBtn) return;
+      audio.volume = 0.35;
+
+      function updateUI(isPlaying) {
+        if (isPlaying) {
+          if (statusText) statusText.textContent = 'Now Playing ♪';
+          if (btnLabel) btnLabel.textContent = 'Pause';
+          if (iconWrap) {
+            iconWrap.style.background = 'rgba(16, 185, 129, 0.2)';
+            iconWrap.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            iconWrap.style.color = '#34d399';
+            iconWrap.classList.add('music-playing-pulse');
+          }
+          if (btnIcon) {
+            btnIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+          }
+          toggleBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        } else {
+          if (statusText) statusText.textContent = 'Off • Click to play';
+          if (btnLabel) btnLabel.textContent = 'Play';
+          if (iconWrap) {
+            iconWrap.style.background = 'rgba(59, 130, 246, 0.15)';
+            iconWrap.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+            iconWrap.style.color = '#60a5fa';
+            iconWrap.classList.remove('music-playing-pulse');
+          }
+          if (btnIcon) {
+            btnIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+          }
+          toggleBtn.style.background = 'linear-gradient(135deg, #3b82f6, #6366f1)';
+        }
+      }
+
+      toggleBtn.addEventListener('click', function () {
+        if (audio.paused) {
+          audio.play().then(function () {
+            updateUI(true);
+          }).catch(function (err) {
+            console.warn('Background sound playback was prevented by browser:', err);
+          });
+        } else {
+          audio.pause();
+          updateUI(false);
         }
       });
-    </script>
-    <% } %>
+
+      audio.addEventListener('play', function () {
+        updateUI(true);
+      });
+
+      audio.addEventListener('pause', function () {
+        updateUI(false);
+      });
+    })();
+  </script>
 </body>
 
 </html>

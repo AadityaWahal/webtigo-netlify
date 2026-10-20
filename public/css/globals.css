@@ -1100,3 +1100,23 @@ button.primary-btn:active {
         grid-template-columns: 1fr;
     }
 }
+
+/* Footer Background Audio Controller */
+@keyframes audioPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    }
+    70% {
+        transform: scale(1.06);
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.music-playing-pulse {
+    animation: audioPulse 2s infinite ease-in-out;
+}
