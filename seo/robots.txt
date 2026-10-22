@@ -4,7 +4,25 @@ Allow: /ads.txt
 Allow: /favicon.ico
 Allow: /favicon*.png
 Allow: /logo.png
+Allow: /images/
 Allow: /apple-touch-icon.png
 Allow: /site.webmanifest
+Allow: /llms.txt
+
+# Explicit AI Search & Generative Engine Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
 
 Sitemap: https://webtigo.netlify.app/sitemap.xml
