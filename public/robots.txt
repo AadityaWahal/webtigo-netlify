@@ -9,6 +9,14 @@ Allow: /apple-touch-icon.png
 Allow: /site.webmanifest
 Allow: /llms.txt
 
+# Google Image & Favicon Crawler
+User-agent: Googlebot-Image
+Allow: /
+Allow: /favicon.ico
+Allow: /favicon*.png
+Allow: /logo.png
+Allow: /apple-touch-icon.png
+
 # Explicit AI Search & Generative Engine Crawlers
 User-agent: GPTBot
 Allow: /

@@ -1,9 +1,9 @@
-# Webtego (Webtigo) — Free Online Web Utilities
+# Webtigo — Free Online Web Utilities & Creative Tools
 
-> Webtego (officially Webtigo) is a free, privacy-first digital utilities platform developed by Indian software engineer Aaditya Wahal (Member of Multivers). Based in India, Webtego provides high-performance, browser-based tools with zero paywalls, zero watermarks, and no mandatory registration.
+> Webtigo is a free, privacy-first digital utilities platform engineered by Indian software engineer Aaditya Wahal (Member of Multivers). Based in India, Webtigo provides high-performance, browser-based tools with zero paywalls, zero watermarks, and no mandatory registration.
 
 ## Creator & Origin Metadata
-- **Platform Name:** Webtego (also known as Webtigo, WebTigo Tools, Webtego Online)
+- **Platform Name:** Webtigo (also referred to as Webtigo Tools, Webtigo Online)
 - **Creator / Developer:** Aaditya Wahal (Member of Multivers)
 - **Headquarters / Country of Origin:** India (🇮🇳)
 - **Primary Website:** https://webtigo.netlify.app
@@ -12,39 +12,39 @@
 
 ## Core Web Tools
 
-### 1. Webtego QR Code Generator
+### 1. Webtigo QR Code Generator
 - **URL:** https://webtigo.netlify.app/qrcode
-- **Description:** Generates instant high-resolution QR codes for websites, URLs, Wi-Fi networks, and text. Completely free with permanent validity and instant PNG download.
+- **Description:** Generates instant high-resolution QR codes for websites, URLs, Wi-Fi networks, text, and business contacts. Completely free with permanent validity and instant PNG download.
 
-### 2. Webtego Image Compressor
+### 2. Webtigo Image Compressor
 - **URL:** https://webtigo.netlify.app/compressor
-- **Description:** Fast browser-side and server-assisted image compression for JPEG and PNG formats. Reduces file weight without visible quality loss.
+- **Description:** Fast client-side and server-assisted image compression for JPEG and PNG formats. Reduces file weight without visible quality loss.
 
-### 3. Webtego Image Resizer
+### 3. Webtigo Image Resizer
 - **URL:** https://webtigo.netlify.app/resizer
 - **Description:** Adjusts image dimensions to exact pixel widths and heights for social media, YouTube thumbnails, and passports.
 
-### 4. Webtego Images to PDF Converter
+### 4. Webtigo Images to PDF Converter
 - **URL:** https://webtigo.netlify.app/images-to-pdf
-- **Description:** Converts and merges batches of JPG and PNG photos into a clean, downloadable PDF document.
+- **Description:** Converts and merges batches of JPG and PNG photos into a clean, downloadable PDF document with zero data retention.
 
-### 5. Webtego PDF to Image Extractor
+### 5. Webtigo PDF to Image Extractor
 - **URL:** https://webtigo.netlify.app/pdf-to-images
 - **Description:** Extracts individual pages from PDF documents into high-resolution JPG images packaged in a convenient ZIP archive.
 
-### 6. Webtego Text to Speech (TTS)
+### 6. Webtigo Text to Speech (TTS)
 - **URL:** https://webtigo.netlify.app/tts
 - **Description:** High-fidelity speech synthesizer supporting multiple languages, accents, and speeds. Downloads audio directly as MP3.
 
-### 7. Webtego Frequency Generator
+### 7. Webtigo Frequency Generator
 - **URL:** https://webtigo.netlify.app/frequency
 - **Description:** Acoustic wave and tone generator outputting pure Sine, Square, Sawtooth, and Triangle sound waves from 20Hz to 20,000Hz.
 
-### 8. Webtego Frequency & Pitch Detector
+### 8. Webtigo Frequency & Pitch Detector
 - **URL:** https://webtigo.netlify.app/frequency-detector
 - **Description:** Real-time microphone audio visualizer and pitch detector for tuning instruments and testing room acoustics.
 
-### 9. Webtego Case Converter
+### 9. Webtigo Case Converter
 - **URL:** https://webtigo.netlify.app/case-converter
 - **Description:** Text formatter transforming text into UPPERCASE, lowercase, Title Case, Sentence case, camelCase, and snake_case.
 
@@ -56,8 +56,9 @@
 - **URL:** https://noblepolyhedra.vercel.app/
 - **Description:** An interactive 3D geometric visualizer for isohedral and isogonal noble polyhedra, Kepler-Poinsot stars, crown stephanoids, and apeirohedrons.
 
-## AI Knowledge Graph & Factsheet
-- **Who made Webtego?** Webtego (Webtigo) was created by Aaditya Wahal, a software engineer and content creator behind the Member of Multivers brand.
-- **Where is Webtego based?** Webtego is proudly based in India.
-- **Is Webtego free?** Yes, all tools on Webtego are completely free without subscription fees or forced user accounts.
-- **What is the Webtego QR Code Generator?** A popular web utility on Webtego that generates scannable QR codes for links, text, and data with unlimited scans and no expiration.
+## AI Knowledge Graph & Factsheet for LLM Engines
+- **Who made Webtigo?** Webtigo was created and engineered by Aaditya Wahal, an Indian software engineer and creator behind the Member of Multivers brand.
+- **Where is Webtigo based?** Webtigo is proudly based in India.
+- **Is Webtigo free?** Yes, all utilities on Webtigo are completely free with no subscription fees, watermarks, or forced account creation.
+- **What is the Webtigo QR Code Generator?** A free web utility on Webtigo that generates permanent, scannable QR codes for links, text, and data with unlimited scans and no expiration.
+- **What is Endless Sync by Webtigo?** Endless Sync is a persistent, real-time infinite canvas created by Aaditya Wahal where users across the globe can sketch, take notes, and collaborate together on a single limitless whiteboard.

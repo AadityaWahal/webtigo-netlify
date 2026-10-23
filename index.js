@@ -153,16 +153,23 @@ function getClerkFrontendApi(publishableKey) {
     }
 }
 
-// Clerk Authentication Middleware setup
+// Clerk Authentication Middleware setup - optimized for instant sub-millisecond public page rendering
 const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY;
 const clerkSecKey = process.env.CLERK_SECRET_KEY;
 const hasClerkKeys = !!(clerkPubKey && clerkSecKey);
 
 if (hasClerkKeys) {
-    app.use(clerkMiddleware({
-        publishableKey: clerkPubKey,
-        secretKey: clerkSecKey
-    }));
+    // Non-blocking Clerk middleware: only authenticate on explicit auth routes to avoid network token roundtrips and dev-browser redirects on public tool pages
+    app.use((req, res, next) => {
+        if (req.path === '/signin' || req.path.startsWith('/api/auth')) {
+            return clerkMiddleware({
+                publishableKey: clerkPubKey,
+                secretKey: clerkSecKey
+            })(req, res, next);
+        }
+        req.auth = { userId: null };
+        next();
+    });
 } else {
     // Fallback middleware to mock auth object so templates don't crash
     app.use((req, res, next) => {
@@ -229,9 +236,9 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     res.render('pages/index', {
-        title: 'Webtego (Webtigo) - Free Online QR Code Generator, Image & Audio Tools',
-        description: 'Access free, premium-grade web tools on Webtego (Webtigo) created by Aaditya Wahal in India. Features the Webtego QR Code Generator, Image Compressor, Resizer, Audio Frequencies, and Endless Sync Canvas.',
-        keywords: 'webtego, webtigo, webtego qr code generator, qr code generator, webtego tools, free online tools, image compressor, image resizer, text to speech, endless sync, aaditya wahal'
+        title: 'Webtigo - Free Online QR Code Generator, Image & Audio Tools',
+        description: 'Access free, premium web utilities on Webtigo created by Aaditya Wahal in India: Webtigo QR Code Generator, Image Compressor, Resizer, Audio Frequencies, and Endless Sync Canvas.',
+        keywords: 'webtigo, webtigo qr code generator, qr code generator, webtigo tools, free online tools, image compressor, image resizer, text to speech, endless sync, aaditya wahal'
     });
 });
 
@@ -302,8 +309,8 @@ app.get('/blog/resizer', (req, res) => {
 app.get('/blog/qrcode', (req, res) => {
     res.render('pages/blog-qrcode', {
         title: 'The Magic Square: The Ultimate Guide to the Webtigo QR Code Generator',
-        description: 'Instantly generate QR codes for URLs, social media profiles, or secret text messages. Completely free, no software required.',
-        keywords: 'qr code generator, create qr code free, text qr code, url to qr code, scan qr code online'
+        description: 'Instantly generate QR codes for URLs, social media profiles, or secret text messages with Webtigo. Completely free, no software required.',
+        keywords: 'webtigo qr code generator, qr code generator, create qr code free, text qr code, url to qr code, scan qr code online'
     });
 });
 
@@ -357,97 +364,97 @@ app.get('/signin', (req, res) => {
 
 app.get('/tts', (req, res) => {
     res.render('pages/tts', {
-        title: 'Free Text to Speech Converter - Download MP3 Audio | Webtego (Webtigo)',
-        description: 'Convert text into natural-sounding speech instantly with Webtego (Webtigo). Multiple voices, accents, and speeds. Download MP3 audio for free.',
-        keywords: 'webtego tts, webtigo tts, text to speech, webtego, webtigo, tts converter, text to mp3, read aloud online, free voice generator'
+        title: 'Free Text to Speech Converter - Download MP3 Audio | Webtigo',
+        description: 'Convert text into natural-sounding speech instantly with Webtigo. Multiple voices, accents, and speeds. Download MP3 audio for free.',
+        keywords: 'webtigo tts, text to speech, webtigo, tts converter, text to mp3, read aloud online, free voice generator'
     });
 });
 
 app.get('/compressor', (req, res) => {
     res.render('pages/compressor', {
-        title: 'Image Compressor - Reduce JPG & PNG Size Online | Webtego (Webtigo)',
-        description: 'Compress JPG and PNG images online without losing quality on Webtego (Webtigo). Reduce file size for faster websites and free sharing. 100% private in browser.',
-        keywords: 'webtego image compressor, webtigo image compressor, image compressor, compress jpeg, compress png, webtego, webtigo, reduce image size, online image optimizer'
+        title: 'Image Compressor - Reduce JPG & PNG Size Online | Webtigo',
+        description: 'Compress JPG and PNG images online without losing quality on Webtigo. Reduce file size for faster websites and free sharing. 100% private in browser.',
+        keywords: 'webtigo image compressor, image compressor, compress jpeg, compress png, webtigo, reduce image size, online image optimizer'
     });
 });
 
 app.get('/qrcode', (req, res) => {
     res.render('pages/qrcode', {
-        title: 'Webtego QR Code Generator - Free High-Res QR Creator | Webtigo',
-        description: 'Create high-resolution custom QR codes instantly with the official Webtego (Webtigo) QR Code Generator. Supports URLs, text, Wi-Fi networks, and contact cards. 100% free, private, engineered by Aaditya Wahal in India.',
-        keywords: 'webtego qr code generator, webtego qr code, webtigo qr code generator, qr code generator, webtego, webtigo, free qr creator, url to qr, scan qr code, wifi qr code, qr maker india, aaditya wahal'
+        title: 'Webtigo QR Code Generator - Free High-Resolution QR Creator',
+        description: 'Create high-resolution custom QR codes instantly with the official Webtigo QR Code Generator. Supports URLs, text, Wi-Fi networks, and contact cards. 100% free, private, engineered by Aaditya Wahal in India.',
+        keywords: 'webtigo qr code generator, webtigo qr code, qr code generator, webtigo, free qr creator, url to qr, scan qr code, wifi qr code, qr maker india, aaditya wahal'
     });
 });
 
 app.get('/resizer', (req, res) => {
     res.render('pages/resizer', {
-        title: 'Image Resizer - Change JPG & PNG Dimensions Online | Webtego (Webtigo)',
-        description: 'Resize images to exact pixel dimensions (width & height) on Webtego (Webtigo). Perfect for YouTube thumbnails, passports, and social media. Fast and free.',
-        keywords: 'webtego image resizer, webtigo image resizer, image resizer, resize jpg, resize png, webtego, webtigo, change photo size, pixel resizer'
+        title: 'Image Resizer - Change JPG & PNG Dimensions Online | Webtigo',
+        description: 'Resize images to exact pixel dimensions (width & height) on Webtigo. Perfect for YouTube thumbnails, passports, and social media. Fast and free.',
+        keywords: 'webtigo image resizer, image resizer, resize jpg, resize png, webtigo, change photo size, pixel resizer'
     });
 });
 
 app.get('/frequency', (req, res) => {
     res.render('pages/frequency', {
-        title: 'Online Tone Generator - Pure Sine & Square Waves | Webtego (Webtigo)',
-        description: 'Free online frequency generator on Webtego (Webtigo). Create pure Sine, Square, Sawtooth, and Triangle waves from 20Hz to 20kHz.',
-        keywords: 'webtego frequency generator, webtigo frequency generator, frequency generator, tone generator, webtego, webtigo, audio oscillator, sine wave'
+        title: 'Online Tone Generator - Pure Sine & Square Waves | Webtigo',
+        description: 'Free online frequency generator on Webtigo. Create pure Sine, Square, Sawtooth, and Triangle waves from 20Hz to 20kHz.',
+        keywords: 'webtigo frequency generator, frequency generator, tone generator, webtigo, audio oscillator, sine wave'
     });
 });
 
 app.get('/frequency-detector', (req, res) => {
     res.render('pages/frequency-detector', {
-        title: 'Frequency Detector - Analyze Pitch & Tones Online | Webtego (Webtigo)',
-        description: 'Free online frequency and pitch detector on Webtego (Webtigo). Real-time frequency analysis from microphone or sustained tones.',
-        keywords: 'webtego frequency detector, webtigo frequency detector, pitch detector, frequency analyzer, webtego, webtigo, microphone tuner'
+        title: 'Frequency Detector - Analyze Pitch & Tones Online | Webtigo',
+        description: 'Free online frequency and pitch detector on Webtigo. Real-time frequency analysis from microphone or sustained tones.',
+        keywords: 'webtigo frequency detector, pitch detector, frequency analyzer, webtigo, microphone tuner'
     });
 });
 
 app.get('/case-converter', (req, res) => {
     res.render('pages/case-converter', {
-        title: 'Case Converter Tool - Uppercase, Lowercase & Title Case | Webtego',
-        description: 'Instantly convert text between Uppercase, Lowercase, Title Case, and Sentence Case on Webtego. Copy to clipboard with one click.',
-        keywords: 'webtego case converter, webtigo case converter, case converter, uppercase to lowercase, title case generator, webtego, webtigo'
+        title: 'Case Converter Tool - Uppercase, Lowercase & Title Case | Webtigo',
+        description: 'Instantly convert text between Uppercase, Lowercase, Title Case, and Sentence Case on Webtigo. Copy to clipboard with one click.',
+        keywords: 'webtigo case converter, case converter, uppercase to lowercase, title case generator, webtigo'
     });
 });
 
 app.get('/images-to-pdf', (req, res) => {
     res.render('pages/images-to-pdf', {
-        title: 'JPG to PDF Converter - Merge Images into One PDF | Webtego',
-        description: 'Convert and merge JPG or PNG images into a single PDF document on Webtego (Webtigo). Client-side processing with zero server uploads.',
-        keywords: 'webtego images to pdf, webtigo images to pdf, images to pdf, jpg to pdf, png to pdf, combine photos to pdf, webtego, webtigo'
+        title: 'JPG to PDF Converter - Merge Images into One PDF | Webtigo',
+        description: 'Convert and merge JPG or PNG images into a single PDF document on Webtigo. Client-side processing with zero server uploads.',
+        keywords: 'webtigo images to pdf, images to pdf, jpg to pdf, png to pdf, combine photos to pdf, webtigo'
     });
 });
 
 app.get('/pdf-to-images', (req, res) => {
     res.render('pages/pdf-to-images', {
-        title: 'PDF to JPG Converter - Extract Pages as Images | Webtego',
-        description: 'Extract every page from a PDF file as a high-quality JPG image on Webtego (Webtigo). Download all pages as a ZIP file. Fast and secure.',
-        keywords: 'webtego pdf to images, webtigo pdf to images, pdf to images, pdf to jpg, extract pdf pages, webtego, webtigo'
+        title: 'PDF to JPG Converter - Extract Pages as Images | Webtigo',
+        description: 'Extract every page from a PDF file as a high-quality JPG image on Webtigo. Download all pages as a ZIP file. Fast and secure.',
+        keywords: 'webtigo pdf to images, pdf to images, pdf to jpg, extract pdf pages, webtigo'
     });
 });
 
 app.get('/privacy', (req, res) => {
     res.render('pages/privacy', {
-        title: 'Privacy Policy - Webtego & Webtigo',
-        description: 'Read the Webtego (Webtigo) Privacy Policy. Learn about our client-side privacy-first architecture, cookies, and authentication.',
-        keywords: 'privacy policy, webtego privacy, webtigo privacy, data protection, cookies'
+        title: 'Privacy Policy - Webtigo',
+        description: 'Read the Webtigo Privacy Policy. Learn about our client-side privacy-first architecture, cookies, and authentication.',
+        keywords: 'privacy policy, webtigo privacy, data protection, cookies'
     });
 });
 
 app.get('/terms', (req, res) => {
     res.render('pages/terms', {
-        title: 'Terms of Service - Webtego & Webtigo',
-        description: 'Read the Webtego (Webtigo) Terms of Service. Understand our browser-based utility terms and data retention policies.',
-        keywords: 'terms of service, webtego terms, webtigo terms, user agreement'
+        title: 'Terms of Service - Webtigo',
+        description: 'Read the Webtigo Terms of Service. Understand our browser-based utility terms and data retention policies.',
+        keywords: 'terms of service, webtigo terms, user agreement'
     });
 });
 
 app.get('/about', (req, res) => {
     res.render('pages/about', {
-        title: 'About Webtego & Webtigo - Created by Aaditya Wahal in India',
-        description: 'Learn about Webtego (Webtigo), an independent web utilities platform engineered by Aaditya Wahal (Member of Multivers) in India. Free client-side tools with complete user privacy.',
-        keywords: 'about webtego, about webtigo, aaditya wahal, member of multivers, who made webtego, webtego creator, where is webtego based, webtego india, free web tools'
+        title: 'About Webtigo - Created by Aaditya Wahal in India',
+        description: 'Learn about Webtigo, an independent web utilities platform engineered by Aaditya Wahal (Member of Multivers) in India. Free client-side tools with complete user privacy.',
+        keywords: 'about webtigo, aaditya wahal, member of multivers, who made webtigo, webtigo creator, where is webtigo based, webtigo india, free web tools'
     });
 });
 

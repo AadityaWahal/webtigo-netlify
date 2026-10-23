@@ -23,6 +23,27 @@
     Access-Control-Allow-Origin = "*"
 
 [[headers]]
+  for = "/favicon-96x96.png"
+  [headers.values]
+    Content-Type = "image/png"
+    Cache-Control = "public, max-age=604800, immutable"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/favicon-192x192.png"
+  [headers.values]
+    Content-Type = "image/png"
+    Cache-Control = "public, max-age=604800, immutable"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/favicon-512x512.png"
+  [headers.values]
+    Content-Type = "image/png"
+    Cache-Control = "public, max-age=604800, immutable"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
   for = "/logo.png"
   [headers.values]
     Content-Type = "image/png"
