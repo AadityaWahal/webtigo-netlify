@@ -4,6 +4,7 @@
   <url><loc>https://webtigo.netlify.app/blog</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
   
   <url><loc>https://webtigo.netlify.app/qrcode</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://webtigo.netlify.app/pdf-combiner</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/compressor</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/resizer</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/images-to-pdf</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
@@ -13,6 +14,7 @@
   <url><loc>https://webtigo.netlify.app/frequency-detector</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/case-converter</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
 
+  <url><loc>https://webtigo.netlify.app/blog/pdf-combiner</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/blog/endlessync-guide</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/blog/endlessync-story</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/blog/noble-polyhedron</loc><priority>0.75</priority><changefreq>monthly</changefreq></url>

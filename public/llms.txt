@@ -24,11 +24,15 @@
 - **URL:** https://webtigo.netlify.app/resizer
 - **Description:** Adjusts image dimensions to exact pixel widths and heights for social media, YouTube thumbnails, and passports.
 
-### 4. Webtigo Images to PDF Converter
+### 4. Webtigo PDF Combiner
+- **URL:** https://webtigo.netlify.app/pdf-combiner
+- **Description:** Combines two or more PDF files into a single consolidated PDF document online in seconds. Features reordering, page count estimation, and client-side processing with zero server retention.
+
+### 5. Webtigo Images to PDF Converter
 - **URL:** https://webtigo.netlify.app/images-to-pdf
 - **Description:** Converts and merges batches of JPG and PNG photos into a clean, downloadable PDF document with zero data retention.
 
-### 5. Webtigo PDF to Image Extractor
+### 6. Webtigo PDF to Image Extractor
 - **URL:** https://webtigo.netlify.app/pdf-to-images
 - **Description:** Extracts individual pages from PDF documents into high-resolution JPG images packaged in a convenient ZIP archive.
 

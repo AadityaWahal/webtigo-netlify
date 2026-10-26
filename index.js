@@ -354,6 +354,14 @@ app.get('/blog/endlessync-story', (req, res) => {
     });
 });
 
+app.get('/blog/pdf-combiner', (req, res) => {
+    res.render('pages/blog-pdf-combiner', {
+        title: 'How Everyday Frustration Built the Webtigo PDF Combiner - Webtigo Blog',
+        description: 'The personal story behind the new Webtigo PDF Combiner: solving real-world document fragmentation and civic record searches.',
+        keywords: 'pdf combiner story, why we built pdf combiner, webtigo pdf combiner, merge pdf files, aaditya wahal, webtigo blog'
+    });
+});
+
 app.get('/signin', (req, res) => {
     res.render('pages/signin', {
         title: 'Sign In - Webtigo',
@@ -415,6 +423,14 @@ app.get('/case-converter', (req, res) => {
         title: 'Case Converter Tool - Uppercase, Lowercase & Title Case | Webtigo',
         description: 'Instantly convert text between Uppercase, Lowercase, Title Case, and Sentence Case on Webtigo. Copy to clipboard with one click.',
         keywords: 'webtigo case converter, case converter, uppercase to lowercase, title case generator, webtigo'
+    });
+});
+
+app.get('/pdf-combiner', (req, res) => {
+    res.render('pages/pdf-combiner', {
+        title: 'PDF Combiner - Merge Two or More PDFs Online Free | Webtigo',
+        description: 'Combine two or more PDF files into one document in seconds on Webtigo. Fast, secure, client-side merging with drag & drop reordering and zero file limits.',
+        keywords: 'pdf combiner, merge pdf, combine pdf files, merge two pdfs, pdf joiner, webtigo pdf combiner, free pdf merger, combine multiple pdfs into one'
     });
 });
 
@@ -573,6 +589,34 @@ app.post('/api/speak', upload.none(), async (req, res) => {
         });
     } catch (err) {
         res.status(500).send('TTS Error');
+    }
+});
+
+// 5. PDF Combiner API (Server-side processing fallback)
+app.post('/api/combine-pdf', upload.array('pdfs', 50), async (req, res) => {
+    try {
+        if (!req.files || req.files.length < 2) {
+            return res.status(400).send('Please provide at least 2 PDF files to combine');
+        }
+        const { PDFDocument } = require('pdf-lib');
+        const mergedPdf = await PDFDocument.create();
+
+        for (const file of req.files) {
+            const pdf = await PDFDocument.load(file.buffer, { ignoreEncryption: true });
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            for (const page of copiedPages) {
+                mergedPdf.addPage(page);
+            }
+        }
+
+        const mergedPdfBytes = await mergedPdf.save();
+        const filename = `combined_${uuidv4().substring(0, 8)}.pdf`;
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(Buffer.from(mergedPdfBytes));
+    } catch (err) {
+        console.error('PDF Combine error:', err);
+        res.status(500).send('Failed to combine PDFs: ' + err.message);
     }
 });
 
