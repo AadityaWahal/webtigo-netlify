@@ -631,57 +631,6 @@ app.post('/api/combine-pdf', upload.array('pdfs', 50), async (req, res) => {
     }
 });
 
-// Temporary In-Memory Storage for Instant Share Links (2-hour rolling retention)
-const sharedFilesMap = new Map();
-
-// Direct file upload endpoint to generate instant public link for Gmail / Drive
-app.post('/api/share/upload', upload.single('file'), (req, res) => {
-    try {
-        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-        const fileId = uuidv4().substring(0, 12);
-        const originalName = req.file.originalname || `file-${Date.now()}`;
-        const fileRecord = {
-            id: fileId,
-            filename: originalName,
-            mimetype: req.file.mimetype || 'application/octet-stream',
-            buffer: req.file.buffer,
-            size: req.file.size,
-            createdAt: Date.now()
-        };
-        sharedFilesMap.set(fileId, fileRecord);
-
-        // Auto-cleanup after 2 hours
-        setTimeout(() => {
-            sharedFilesMap.delete(fileId);
-        }, 2 * 60 * 60 * 1000);
-
-        const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
-        const host = req.headers.host || 'webtigo.netlify.app';
-        const directUrl = `${protocol}://${host}/api/share/file/${fileId}`;
-
-        res.json({
-            success: true,
-            fileId,
-            url: directUrl,
-            filename: originalName
-        });
-    } catch (err) {
-        console.error('Share upload error:', err);
-        res.status(500).json({ error: 'Failed to create share link' });
-    }
-});
-
-// Direct file access endpoint (stream inline with proper filename)
-app.get('/api/share/file/:id', (req, res) => {
-    const fileRecord = sharedFilesMap.get(req.params.id);
-    if (!fileRecord) {
-        return res.status(404).send('This shared file link has expired or was not found.');
-    }
-    res.setHeader('Content-Type', fileRecord.mimetype);
-    res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(fileRecord.filename)}"`);
-    res.send(fileRecord.buffer);
-});
-
 // 5. Authentication API Routes (Serverless & Local compatible)
 app.post('/api/auth/login', (req, res) => {
     try {

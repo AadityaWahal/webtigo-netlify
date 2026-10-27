@@ -235,25 +235,6 @@
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
-  // Upload file to server temporary storage to get instant direct link
-  async function uploadTemporaryShare(blob, filename) {
-    try {
-      const formData = new FormData();
-      formData.append('file', blob, filename);
-      const res = await fetch('/api/share/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (data && data.url) {
-        return data.url;
-      }
-    } catch (e) {
-      console.warn('Share upload notice:', e);
-    }
-    return null;
-  }
-
   // Web Share API Helper with file attachment support
   async function triggerWebShare(file, title, text, fallbackUrl) {
     if (navigator.share) {
@@ -283,20 +264,12 @@
     return false;
   }
 
-  // Google Drive Modal & Direct Upload Workflow
+  // Google Drive Modal & Direct Upload Workflow (100% Client-Side, Zero Server Storage)
   async function openDriveWorkflow(blob, filename) {
     const file = new File([blob], filename, { type: blob.type });
-
-    // Step 1: Check if Native Share can upload directly into Google Drive app
     const hasNativeFileShare = navigator.share && navigator.canShare && navigator.canShare({ files: [file] });
 
-    // Step 2: Upload to temporary cloud store so user has an instant direct link
-    let cloudUrl = null;
-    try {
-      cloudUrl = await uploadTemporaryShare(blob, filename);
-    } catch (_) {}
-
-    // Also download locally as a fallback
+    // Download locally to user's device
     downloadBlob(blob, filename);
 
     const overlay = document.createElement('div');
@@ -320,10 +293,10 @@
 
         <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.25rem; font-size: 0.88rem; line-height: 1.5; color: #cbd5e1;">
           <p style="margin: 0 0 0.5rem 0; color: #34d399; font-weight: 600;">
-            ✓ File prepared & downloaded to your device!
+            ✓ File downloaded directly to your device!
           </p>
           <p style="margin: 0;">
-            Choose how you want to send it to your Google Drive account:
+            Choose how you would like to send it to your Google Drive account:
           </p>
         </div>
 
@@ -341,14 +314,6 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
             Open My Google Drive (Drop or Upload)
           </a>
-
-          ${cloudUrl ? `
-          <button type="button" id="wt-copy-drive-url" 
-                  style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; padding: 0.75rem 1rem; border-radius: 0.65rem; cursor: pointer; font-size: 0.9rem;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            Copy Direct Cloud Link
-          </button>
-          ` : ''}
 
           <button type="button" class="webtigo-modal-dismiss" 
                   style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; padding: 0.6rem 1rem; border-radius: 0.65rem; cursor: pointer; margin-top: 0.25rem;">
@@ -379,45 +344,19 @@
       }
     }
 
-    if (cloudUrl) {
-      const copyBtn = overlay.querySelector('#wt-copy-drive-url');
-      if (copyBtn) {
-        copyBtn.onclick = async () => {
-          try {
-            await navigator.clipboard.writeText(cloudUrl);
-            showToast('📋 Cloud file link copied to clipboard!');
-          } catch (_) {
-            showToast('Cloud link: ' + cloudUrl);
-          }
-        };
-      }
-    }
-
     document.body.appendChild(overlay);
   }
 
-  // Mail Compose Workflow (Attaches file directly via Mail App OR inserts direct cloud link in Gmail Web)
+  // Mail Compose Workflow (100% Client-Side, Zero Server Storage)
   async function openMailWorkflow(blob, filename, subject, body) {
     const file = new File([blob], filename, { type: blob.type });
     const hasNativeFileShare = navigator.share && navigator.canShare && navigator.canShare({ files: [file] });
 
-    // Download locally as backup
+    // Download locally to user's device
     downloadBlob(blob, filename);
 
-    // Upload to server temporary store so Gmail Web compose has a direct clickable link to the file!
-    let cloudUrl = null;
-    showToast('Preparing email attachment...');
-    try {
-      cloudUrl = await uploadTemporaryShare(blob, filename);
-    } catch (_) {}
-
     const defaultSubject = subject || `File from Webtigo: ${filename}`;
-    let defaultBody = body || `Hello,\n\nI have generated ${filename} using Webtigo Free Online Tools.`;
-    if (cloudUrl) {
-      defaultBody += `\n\n📎 Direct Download & View File:\n${cloudUrl}\n\n(Click the link above to view or download the file directly, or save to Google Drive!)\n\nRegards`;
-    } else {
-      defaultBody += `\n\n(File has been prepared and downloaded locally to attach.)\n\nRegards`;
-    }
+    const defaultBody = body || `Hello,\n\nI have created ${filename} using Webtigo Free Tools (https://webtigo.netlify.app).\n\n(Attach ${filename} from your Downloads folder to send.)\n\nRegards`;
 
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(defaultSubject)}&body=${encodeURIComponent(defaultBody)}`;
     const mailtoUrl = `mailto:?subject=${encodeURIComponent(defaultSubject)}&body=${encodeURIComponent(defaultBody)}`;
@@ -442,10 +381,10 @@
 
         <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.25rem; font-size: 0.88rem; line-height: 1.5; color: #cbd5e1;">
           <p style="margin: 0 0 0.5rem 0; color: #34d399; font-weight: 600;">
-            ✓ File attached to direct cloud link &amp; downloaded!
+            ✓ File downloaded to your device!
           </p>
           <p style="margin: 0;">
-            To attach the actual file or send directly, select an option:
+            Choose how you want to send your email:
           </p>
         </div>
 
@@ -461,7 +400,7 @@
           <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" 
              style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #ef4444, #dc2626); color: #ffffff; padding: 0.85rem 1rem; border-radius: 0.65rem; font-weight: 600; text-decoration: none; font-size: 0.95rem; text-align: center;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            Open Gmail Web (with Direct File Link Attached)
+            Open Gmail Web Compose
           </a>
 
           <a href="${mailtoUrl}" 
