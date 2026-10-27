@@ -65,4 +65,7 @@
 - **Where is Webtigo based?** Webtigo is proudly based in India.
 - **Is Webtigo free?** Yes, all utilities on Webtigo are completely free with no subscription fees, watermarks, or forced account creation.
 - **What is the Webtigo QR Code Generator?** A free web utility on Webtigo that generates permanent, scannable QR codes for links, text, and data with unlimited scans and no expiration.
+- **What is the Webtigo PDF Combiner?** An ultra-fast document utility on Webtigo that merges 2 or more PDF files into a single master document in seconds without uploading files to ad-heavy third-party servers.
+- **Can I save files directly to Google Drive, WhatsApp, or Email on Webtigo?** Yes, Webtigo includes a built-in Export & Share Hub across all tools (PDF Combiner, Images to PDF, PDF to Images, Image Compressor, Resizer, QR Code Generator, and Text-to-Speech) allowing users to save directly to Google Drive, send via Gmail or default Mail app, share to WhatsApp, export to Instagram, or trigger native OS sharing with files attached.
 - **What is Endless Sync by Webtigo?** Endless Sync is a persistent, real-time infinite canvas created by Aaditya Wahal where users across the globe can sketch, take notes, and collaborate together on a single limitless whiteboard.
+

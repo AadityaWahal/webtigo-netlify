@@ -40,6 +40,11 @@
                 style="width: 0%; height: 8px; background: var(--accent-color, #4facfe); transition: width 0.3s;"></div>
         </div>
     </div>
+
+    <div id="pdf-img-result" style="display: none; margin-top: 1.5rem;">
+        <p style="text-align: center; color: #34d399; font-weight: 600; margin-bottom: 0.5rem;">✓ Extraction Complete!</p>
+        <div id="pdf-img-share-hub"></div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -105,15 +110,32 @@
             progressText.innerText = 'Zipping files...';
 
             const zipContent = await zip.generateAsync({ type: 'blob' });
+            const originalBase = file.name.replace(/\.[^/.]+$/, "");
+            const filename = `webtigo-extracted-${originalBase}.zip`;
+
+            const resDiv = document.getElementById('pdf-img-result');
+            if (resDiv) {
+                resDiv.style.display = 'block';
+                if (window.WebtigoShare) {
+                    window.WebtigoShare.renderHub('#pdf-img-share-hub', {
+                        blob: zipContent,
+                        filename: filename,
+                        title: 'Extracted PDF Images - Webtigo',
+                        text: `Extracted ${totalPages} images from PDF using Webtigo: ${filename}`,
+                        mimeType: 'application/zip',
+                        subject: 'Extracted Images ZIP from Webtigo'
+                    });
+                }
+            }
 
             const url = URL.createObjectURL(zipContent);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `webtigo-extracted-${Date.now()}.zip`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 3000);
 
             progressText.innerText = 'Done!';
 

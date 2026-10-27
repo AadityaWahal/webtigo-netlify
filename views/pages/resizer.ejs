@@ -63,8 +63,8 @@
     <button class="primary-btn" onclick="resizeImage()">Resize</button>
 
     <div id="result" class="result-area" style="display: none;">
-        <a id="download-link" href="#" class="primary-btn"
-            style="text-decoration: none; display: inline-block;">Download Resized Image</a>
+        <p style="margin-bottom: 0.5rem; color: #34d399; font-weight: 600;">✓ Resize Complete!</p>
+        <div id="res-share-hub"></div>
     </div>
 </div>
 
@@ -83,14 +83,23 @@
 
         try {
             const res = await fetch('/api/resize-image', { method: 'POST', body: formData });
-            if (!res.ok) throw new Error('Failed');
+            if (!res.ok) throw new Error('Failed to resize image');
 
             const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
+            const originalName = file.name.replace(/\.[^/.]+$/, "");
+            const filename = `webtigo-resized-${width}x${height}-${originalName}.jpg`;
 
-            const link = document.getElementById('download-link');
-            link.href = url;
-            link.download = `resized-${Date.now()}.jpg`;
+            if (window.WebtigoShare) {
+                window.WebtigoShare.renderHub('#res-share-hub', {
+                    blob: blob,
+                    filename: filename,
+                    title: `Resized Image (${width}x${height}) - Webtigo`,
+                    text: `Resized image (${width}x${height}) using Webtigo: ${filename}`,
+                    mimeType: 'image/jpeg',
+                    subject: 'Resized Image from Webtigo'
+                });
+            }
+
             document.getElementById('result').style.display = 'block';
         } catch (e) {
             alert(e.message);

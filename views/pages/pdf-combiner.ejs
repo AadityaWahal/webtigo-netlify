@@ -113,6 +113,7 @@
                 <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #10b981); transition: width 0.2s;"></div>
             </div>
             <span id="status-text" style="font-size: 0.9rem; color: #cbd5e1; font-weight: 500;">Processing...</span>
+            <div id="combine-share-hub" style="margin-top: 1rem;"></div>
         </div>
     </div>
 </div>
@@ -471,10 +472,22 @@
 
             const mergedBytes = await mergedPdf.save();
             progressBar.style.width = '100%';
-            statusText.textContent = 'Done! Downloading your combined PDF...';
+            statusText.textContent = 'Done! Combined PDF ready.';
+
+            const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+            
+            if (window.WebtigoShare) {
+                window.WebtigoShare.renderHub('#combine-share-hub', {
+                    blob: blob,
+                    filename: customFilename,
+                    title: 'Combined PDF - Webtigo',
+                    text: `Combined ${pdfFiles.length} PDFs into ${customFilename} using Webtigo PDF Combiner: https://webtigo.netlify.app/pdf-combiner`,
+                    mimeType: 'application/pdf',
+                    subject: `Combined Document: ${customFilename}`
+                });
+            }
 
             // Trigger instant download
-            const blob = new Blob([mergedBytes], { type: 'application/pdf' });
             const downloadUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = downloadUrl;
@@ -510,6 +523,18 @@
 
                 progressBar.style.width = '100%';
                 const blob = await response.blob();
+
+                if (window.WebtigoShare) {
+                    window.WebtigoShare.renderHub('#combine-share-hub', {
+                        blob: blob,
+                        filename: customFilename,
+                        title: 'Combined PDF - Webtigo',
+                        text: `Combined ${pdfFiles.length} PDFs into ${customFilename} using Webtigo: https://webtigo.netlify.app/pdf-combiner`,
+                        mimeType: 'application/pdf',
+                        subject: `Combined Document: ${customFilename}`
+                    });
+                }
+
                 const downloadUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;

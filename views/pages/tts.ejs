@@ -48,9 +48,8 @@
     <button class="primary-btn" onclick="generateSpeech()">Generate Audio</button>
 
     <div id="result" class="result-area" style="display: none;">
-        <audio id="audio-player" controls style="width: 100%; margin-bottom: 1rem;"></audio>
-        <a id="download-link" href="#" class="primary-btn"
-            style="text-decoration: none; display: inline-block;">Download MP3</a>
+        <audio id="audio-player" controls style="width: 100%; margin-bottom: 0.5rem;"></audio>
+        <div id="tts-share-hub"></div>
     </div>
 </div>
 
@@ -79,9 +78,18 @@
             audio.src = url;
             audio.play();
 
-            const link = document.getElementById('download-link');
-            link.href = url;
-            link.download = `speech-${Date.now()}.mp3`;
+            const filename = `webtigo-speech-${Date.now()}.mp3`;
+
+            if (window.WebtigoShare) {
+                window.WebtigoShare.renderHub('#tts-share-hub', {
+                    blob: blob,
+                    filename: filename,
+                    title: 'Webtigo AI Speech',
+                    text: `Listen to this audio generated with Webtigo Text-to-Speech: "${text.substring(0, 80)}..."`,
+                    mimeType: 'audio/mpeg',
+                    subject: 'Audio Clip from Webtigo TTS'
+                });
+            }
 
             resultDiv.style.display = 'block';
         } catch (e) {

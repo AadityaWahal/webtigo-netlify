@@ -37,6 +37,11 @@
         <button class="primary-btn" onclick="convertToPdf()" id="convert-btn" disabled
             style="opacity: 0.5; cursor: not-allowed;">Convert to PDF</button>
     </div>
+
+    <div id="pdf-result" style="display: none; margin-top: 1.5rem;">
+        <p style="text-align: center; color: #34d399; font-weight: 600; margin-bottom: 0.5rem;">✓ PDF Generated Successfully!</p>
+        <div id="pdf-share-hub"></div>
+    </div>
 </div>
 
 <style>
@@ -201,15 +206,32 @@
 
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const filename = `webtigo-images-${Date.now()}.pdf`;
 
+            const resultContainer = document.getElementById('pdf-result');
+            if (resultContainer) {
+                resultContainer.style.display = 'block';
+                if (window.WebtigoShare) {
+                    window.WebtigoShare.renderHub('#pdf-share-hub', {
+                        blob: blob,
+                        filename: filename,
+                        title: 'Webtigo Image PDF',
+                        text: `Check out this PDF created with Webtigo Images to PDF tool: ${filename}`,
+                        mimeType: 'application/pdf',
+                        subject: 'PDF Document from Webtigo'
+                    });
+                }
+            }
+
+            // Also auto-trigger initial download
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `webtigo-images-${Date.now()}.pdf`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 3000);
 
         } catch (err) {
             console.error(err);
