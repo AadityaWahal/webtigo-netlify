@@ -1,0 +1,183 @@
+<div class="glass-card" style="max-width: 860px; margin: 3rem auto; padding: 2.5rem;">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "How an Accidental Game of Tic-Tac-Toe Inspired the Games Feature in Endlessync",
+      "description": "How testing real-time latency with an accidental game of Tic-Tac-Toe inspired built-in games on Endlessync, the infinite shared canvas.",
+      "author": {
+        "@type": "Person",
+        "name": "Aaditya Wahal",
+        "alternateName": "Member of Multivers"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Webtigo"
+      },
+      "url": "https://webtigo.netlify.app/blog/endlessync-games"
+    }
+    </script>
+
+    <!-- Header Section -->
+    <div style="text-align: center; margin-bottom: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2rem;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 1.25rem;">
+            <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.35rem 0.85rem; border-radius: 9999px; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">
+                🎮 Founder's Story &bull; Endlessync &bull; Webtigo Blog
+            </span>
+        </div>
+        <h1 style="color: white; margin-bottom: 1rem; line-height: 1.3; font-size: 2.4rem; background: linear-gradient(135deg, #ffffff 20%, #c084fc 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+            How I Thought of Adding Games in Endlessync
+        </h1>
+        <p style="color: rgba(255,255,255,0.78); font-size: 1.05rem; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+            How an accidental late-night game of Tic-Tac-Toe while testing WebSocket latency revealed that an infinite canvas isn't just for work—it's a shared place to hang out.
+        </p>
+
+        <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            <a href="https://endlessync.vercel.app/" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #06b6d4, #a855f7); border: none; padding: 0.65rem 1.4rem; font-weight: 600; border-radius: 9999px; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);">
+                <span>🌐 Open Endlessync Board</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </a>
+            <a href="/blog/endlessync-guide" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 0.65rem 1.2rem; font-weight: 500; border-radius: 9999px;">
+                <span>📖 User Guide</span>
+            </a>
+            <a href="/blog" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 0.65rem 1.2rem; font-weight: 500; border-radius: 9999px;">
+                <span>← All Blog Stories</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Blog Story Body (Exact user text preserved without modifications) -->
+    <article class="blog-body" style="color: rgba(255,255,255,0.9); line-height: 1.95; font-size: 1.12rem;">
+        <p style="margin-bottom: 1.75rem;">
+            It started late one evening when my brother and I were testing Endlessync.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            I had the real-time canvas open and was checking a few things: how quickly strokes appeared, whether cursors stayed in sync, and how well the WebSocket connection handled everything happening on the board. My brother joined from his own screen to help me test it. For a while, we did what you'd expect during a testing session. We drew random lines, kept hitting the erase button, moved our cursors around, and tried to see where things would break.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            Somewhere along the way, things took an unexpected turn.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            One of us drew a few lines and made a 3×3 grid. A circle appeared in the middle, followed by an X in the top-right corner. Just like that, we were playing Tic-Tac-Toe.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            What was supposed to be a technical testing session had turned into a proper game. We stopped paying attention to latency and started focusing on our next moves. Every turn became about blocking the other person, spotting an opening, or setting up a win. Neither of us needed to say much. We were just playing.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            When the board filled up, we didn't erase it and start over. We moved across the canvas, drew another grid, and played again.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            It was a small thing, but it got me thinking. I'd been looking at Endlessync mainly as a tool for collaboration, something people could use for wireframes, diagrams, brainstorming, and notes. But that evening made me realize there was another side to it.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            An infinite canvas gives people room to do pretty much anything. They can sketch ideas, doodle while talking, or mess around with whatever comes to mind. Sometimes, people don't need another productivity feature. They just need a reason to interact with each other. And if you've ever tried drawing a neat game board with a mouse or trackpad, you know it gets annoying pretty quickly.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            That's where the idea for a Games feature came from.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            I started wondering what it would be like if people could add a game board to the canvas with a single click. No drawing grids by hand, no setting things up from scratch. Just pick a game and start playing.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            It could be a fun way for friends to spend time together remotely, or for teammates to take a break between brainstorming sessions. Someone could open a game right next to their notes or project board, play a quick round, and get back to work whenever they wanted. The canvas wouldn't have to be just a place where people got things done. It could also be a place where they hung out.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            Once I had the idea, I started using AI to brainstorm games that might work well on an infinite, shared 2D canvas. I wanted to keep things simple. The games had to be easy to understand, quick to get into, and enjoyable to play with other people. They also needed to work naturally with the way Endlessync was built.
+        </p>
+
+        <p style="margin-bottom: 1rem;">
+            I kept three things in mind:
+        </p>
+
+        <ul style="margin-bottom: 2rem; padding-left: 1.5rem; line-height: 1.9;">
+            <li style="margin-bottom: 0.75rem;">
+                <strong>Simple 2D gameplay.</strong> Games that used grids, dots, lines, or basic shapes would be the easiest to bring onto the canvas.
+            </li>
+            <li style="margin-bottom: 0.75rem;">
+                <strong>Easy to pick up.</strong> I wanted games that people could start playing almost immediately, without having to learn a bunch of rules first.
+            </li>
+            <li style="margin-bottom: 0.75rem;">
+                <strong>Room to play anywhere.</strong> Since the canvas was infinite, games shouldn't be restricted to one screen. People could have several boards spread out across the same workspace and move between them freely.
+            </li>
+        </ul>
+
+        <p style="margin-bottom: 1.75rem;">
+            A few ideas stood out pretty quickly.
+        </p>
+
+        <h3 style="color: #38bdf8; font-size: 1.35rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 700;">
+            Connect Four (Four-in-a-Row)
+        </h3>
+        <p style="margin-bottom: 1.75rem;">
+            This was one of the first games that came to mind. The rules are simple, most people already know how to play, and the board is easy to represent on a canvas. Players could drop their tokens into the grid and start competing right away. It was the kind of game that didn't need much explanation.
+        </p>
+
+        <h3 style="color: #a855f7; font-size: 1.35rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 700;">
+            Dots and Boxes
+        </h3>
+        <p style="margin-bottom: 1.75rem;">
+            I liked this one because it felt so closely connected to what Endlessync already did. It's the classic game where players take turns drawing lines between dots, trying to complete squares and claim them. The entire game revolves around drawing, so bringing it to a collaborative canvas felt like a natural fit.
+        </p>
+
+        <h3 style="color: #34d399; font-size: 1.35rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 700;">
+            Battleship and Grid Mazes
+        </h3>
+        <p style="margin-bottom: 1.75rem;">
+            These ideas opened up a few more possibilities. Battleship could let players place their fleets on coordinate grids and try to guess where their opponent had hidden them. Grid mazes could let one person create a path while another tried to find their way through it. Both ideas made use of the canvas in a slightly different way and gave players more room to experiment.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            The more I thought about these games, the more I liked the direction Endlessync could take. Adding game boards wasn't just about giving users a few extra things to click on. It was about changing how people might use the canvas in the first place.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            Most collaborative tools are built around a task. You open them because you have something to plan, design, discuss, or organize. But people don't always want to be productive every second they're together. Sometimes they want to take a break, joke around, or do something spontaneous.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            I wanted Endlessync to leave room for that, too.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            With ready-made games, the canvas could become a shared space where work and play could happen side by side. Someone could be sketching out an idea while another person starts a quick game nearby. Friends could use it to hang out, and teammates could use it to unwind between tasks. The infinite canvas made all of this feel possible without forcing everything into a separate screen or experience.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            Looking back, the idea came from something pretty ordinary. My brother and I were testing a feature, got distracted by a game of Tic-Tac-Toe, and ended up having more fun than we'd expected.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            Neither of us had planned it. We just saw an empty space, drew a few lines, and started playing.
+        </p>
+
+        <p style="margin-bottom: 1.75rem;">
+            But that moment made me think about what Endlessync could be beyond its original purpose. It could still be a place to work together, but it could also be a place to spend time together.
+        </p>
+
+        <p style="margin-bottom: 2rem;">
+            And that's what I wanted the Games feature to bring to the canvas: a simple way for people to stop what they're doing for a moment, play something together, and enjoy the space they're already sharing.
+        </p>
+    </article>
+
+    <!-- Attached Call to Action -->
+    <div style="margin-top: 3.5rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(168, 85, 247, 0.1)); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: 18px; padding: 2rem; text-align: center;">
+        <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.4rem;">Experience Endlessync Live</h3>
+        <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem; max-width: 540px; margin-left: auto; margin-right: auto;">
+            Join the global real-time canvas where ideas, drawings, and spontaneous games happen together on an infinite plane with zero walls.
+        </p>
+        <a href="https://endlessync.vercel.app/" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 2rem; font-size: 1rem; background: linear-gradient(135deg, #06b6d4, #a855f7);">
+            <span>Open Endlessync Board ↗</span>
+        </a>
+    </div>
+</div>

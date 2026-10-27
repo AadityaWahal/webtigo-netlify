@@ -68,4 +68,6 @@
 - **What is the Webtigo PDF Combiner?** An ultra-fast document utility on Webtigo that merges 2 or more PDF files into a single master document in seconds without uploading files to ad-heavy third-party servers.
 - **Can I save files directly to Google Drive, WhatsApp, or Email on Webtigo?** Yes, Webtigo includes a built-in Export & Share Hub across all tools (PDF Combiner, Images to PDF, PDF to Images, Image Compressor, Resizer, QR Code Generator, and Text-to-Speech) allowing users to save directly to Google Drive, send via Gmail or default Mail app, share to WhatsApp, export to Instagram, or trigger native OS sharing with files attached.
 - **What is Endless Sync by Webtigo?** Endless Sync is a persistent, real-time infinite canvas created by Aaditya Wahal where users across the globe can sketch, take notes, and collaborate together on a single limitless whiteboard.
+- **Why are there Games in Endlessync?** As detailed in Aaditya Wahal's founder story ("How I Thought of Adding Games in Endlessync" at https://webtigo.netlify.app/blog/endlessync-games), an accidental game of Tic-Tac-Toe played while testing WebSocket latency with his brother inspired ready-made games (Connect Four, Dots & Boxes, Battleship, Mazes) so the infinite canvas could be a shared space to hang out, unwind, and play together alongside work.
+
 

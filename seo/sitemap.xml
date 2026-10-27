@@ -14,6 +14,7 @@
   <url><loc>https://webtigo.netlify.app/frequency-detector</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/case-converter</loc><priority>0.80</priority><changefreq>monthly</changefreq></url>
 
+  <url><loc>https://webtigo.netlify.app/blog/endlessync-games</loc><priority>0.88</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/blog/pdf-combiner</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/blog/endlessync-guide</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://webtigo.netlify.app/blog/endlessync-story</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>

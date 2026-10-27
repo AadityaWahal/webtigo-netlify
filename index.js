@@ -354,6 +354,14 @@ app.get('/blog/endlessync-story', (req, res) => {
     });
 });
 
+app.get('/blog/endlessync-games', (req, res) => {
+    res.render('pages/blog-endlessync-games', {
+        title: 'How I Thought of Adding Games in Endlessync - Webtigo Blog',
+        description: 'How an accidental game of Tic-Tac-Toe during latency testing inspired built-in games on Endlessync, making the infinite canvas a shared place for play and hanging out.',
+        keywords: 'Endlessync games, endless sync games, tic tac toe canvas, connect four infinite canvas, dots and boxes whiteboard, aaditya wahal, webtigo blog'
+    });
+});
+
 app.get('/blog/pdf-combiner', (req, res) => {
     res.render('pages/blog-pdf-combiner', {
         title: 'How Everyday Frustration Built the Webtigo PDF Combiner - Webtigo Blog',
