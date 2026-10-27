@@ -1,24 +1,42 @@
-<div class="glass-card" style="max-width: 480px; margin: 3rem auto; padding: 2.5rem 2rem; border-radius: 1.25rem;">
-    <!-- If Clerk publishable key is present, Clerk can mount here -->
-    <div id="sign-in-mount" style="display: none;"></div>
+<div class="glass-card" style="max-width: 500px; margin: 3rem auto; padding: 2.5rem 2rem; border-radius: 1.25rem;">
+    <!-- If User is already signed in (Server or Client) -->
+    <div id="already-signed-in" style="<%= (typeof user !== 'undefined' && user) ? 'display: block;' : 'display: none;' %> text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: white; font-size: 1.75rem; font-weight: 700; margin-bottom: 1.25rem; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);">
+            ✓
+        </div>
+        <h2 style="color: white; font-size: 1.6rem; margin-bottom: 0.5rem;">You are Signed In</h2>
+        <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem;">
+            Signed in as <strong id="logged-user-name" style="color: #38bdf8;"><%= (typeof user !== 'undefined' && user) ? user.name : 'Member' %></strong>
+            <span id="logged-user-email" style="display: block; font-size: 0.85rem; color: #64748b; margin-top: 4px;"><%= (typeof user !== 'undefined' && user) ? user.email : '' %></span>
+        </p>
 
-    <!-- Built-in & Serverless Auth Container -->
-    <div id="built-in-auth-container">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="/" class="primary-btn" style="text-decoration: none; padding: 0.85rem; border-radius: 0.75rem; font-weight: 600; text-align: center; display: block;">
+                Go to Webtigo Home &amp; Tools &rarr;
+            </a>
+            <button type="button" onclick="performSignOut()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 0.75rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                Sign Out / Switch Account
+            </button>
+        </div>
+    </div>
+
+    <!-- Built-in & Serverless Auth Container (Always Primary) -->
+    <div id="built-in-auth-container" style="<%= (typeof user !== 'undefined' && user) ? 'display: none;' : 'display: block;' %>">
         <div style="text-align: center; margin-bottom: 2rem;">
             <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); border: 1px solid rgba(255, 255, 255, 0.15); margin-bottom: 1rem;">
                 <img src="/logo.png" alt="Webtigo Logo" style="width: 34px; height: auto;">
             </div>
             <h1 id="auth-title" style="font-size: 1.75rem; font-weight: 700; color: white; margin-bottom: 0.5rem; letter-spacing: -0.5px;">Welcome to Webtigo</h1>
             <p id="auth-subtitle" style="font-size: 0.95rem; color: #94a3b8; line-height: 1.5;">
-                Sign in to your member account to unlock unlimited tools, fast conversions, and cloud features.
+                Sign in to your member account to access all free tools, saved settings, and cloud exports.
             </p>
         </div>
 
-        <!-- Quick 1-Click Demo Login -->
+        <!-- Quick 1-Click Instant Member Access -->
         <div style="margin-bottom: 1.5rem;">
-            <button type="button" onclick="quickLogin('demo')" class="quick-demo-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd; padding: 0.75rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease;">
+            <button type="button" onclick="quickLogin('demo')" class="quick-demo-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid rgba(59, 130, 246, 0.5); color: #93c5fd; padding: 0.85rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                <span>Quick One-Click Member Access</span>
+                <span>Instant 1-Click Sign In</span>
             </button>
         </div>
 
@@ -30,10 +48,10 @@
 
         <!-- Mode Tabs -->
         <div style="display: flex; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 10px; margin-bottom: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.08);">
-            <button type="button" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1; padding: 0.5rem; border: none; background: rgba(59, 130, 246, 0.8); color: white; font-weight: 600; border-radius: 7px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+            <button type="button" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1; padding: 0.55rem; border: none; background: rgba(59, 130, 246, 0.85); color: white; font-weight: 600; border-radius: 7px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
                 Sign In
             </button>
-            <button type="button" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1; padding: 0.5rem; border: none; background: transparent; color: #94a3b8; font-weight: 600; border-radius: 7px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+            <button type="button" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1; padding: 0.55rem; border: none; background: transparent; color: #94a3b8; font-weight: 600; border-radius: 7px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
                 Create Account
             </button>
         </div>
@@ -75,6 +93,16 @@
             </button>
         </form>
 
+        <!-- Optional Clerk Mount (Underneath, never hides built-in auth) -->
+        <div id="clerk-container" style="display: none; margin-top: 1.5rem;">
+            <div style="display: flex; align-items: center; margin: 1rem 0; gap: 1rem;">
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+                <span style="font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Or Google / Clerk Social</span>
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+            </div>
+            <div id="sign-in-mount"></div>
+        </div>
+
         <div style="margin-top: 1.5rem; text-align: center;">
             <a href="/" style="font-size: 0.85rem; color: #94a3b8; text-decoration: none; transition: color 0.2s;">&larr; Back to Webtigo Home</a>
         </div>
@@ -83,8 +111,8 @@
 
 <style>
     .quick-demo-btn:hover {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.25)) !important;
-        border-color: rgba(59, 130, 246, 0.6) !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(99, 102, 241, 0.35)) !important;
+        border-color: rgba(59, 130, 246, 0.8) !important;
         transform: translateY(-1px);
     }
     input:focus {
@@ -116,10 +144,10 @@
         const signupForm = document.getElementById('signup-form');
         const authTitle = document.getElementById('auth-title');
         const alertBox = document.getElementById('auth-alert');
-        alertBox.style.display = 'none';
+        if (alertBox) alertBox.style.display = 'none';
 
         if (tab === 'login') {
-            loginTab.style.background = 'rgba(59, 130, 246, 0.8)';
+            loginTab.style.background = 'rgba(59, 130, 246, 0.85)';
             loginTab.style.color = 'white';
             signupTab.style.background = 'transparent';
             signupTab.style.color = '#94a3b8';
@@ -127,7 +155,7 @@
             signupForm.style.display = 'none';
             authTitle.innerText = 'Welcome to Webtigo';
         } else {
-            signupTab.style.background = 'rgba(59, 130, 246, 0.8)';
+            signupTab.style.background = 'rgba(59, 130, 246, 0.85)';
             signupTab.style.color = 'white';
             loginTab.style.background = 'transparent';
             loginTab.style.color = '#94a3b8';
@@ -135,6 +163,17 @@
             loginForm.style.display = 'none';
             authTitle.innerText = 'Create Webtigo Account';
         }
+    }
+
+    function applyLoginSuccess(user) {
+        try {
+            localStorage.setItem('webtigo_user', JSON.stringify(user));
+        } catch (_) {}
+
+        showAlert(`Welcome ${user.name}! Redirecting...`, false);
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 300);
     }
 
     async function quickLogin(mode = 'demo') {
@@ -150,13 +189,10 @@
                 body: JSON.stringify({ mode })
             });
             const data = await res.json();
-            if (data.success) {
-                showAlert('Welcome! Redirecting...', false);
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 400);
+            if (data.success && data.user) {
+                applyLoginSuccess(data.user);
             } else {
-                showAlert(data.error || 'Login failed. Please try again.');
+                showAlert(data.error || 'Login failed.');
                 btn.innerHTML = originalText;
                 btn.style.opacity = '1';
             }
@@ -183,11 +219,8 @@
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (data.success) {
-                showAlert('Signed in successfully! Redirecting...', false);
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 400);
+            if (data.success && data.user) {
+                applyLoginSuccess(data.user);
             } else {
                 showAlert(data.error || 'Invalid credentials.');
                 submitBtn.disabled = false;
@@ -217,11 +250,8 @@
                 body: JSON.stringify({ name, email, password })
             });
             const data = await res.json();
-            if (data.success) {
-                showAlert('Account created! Redirecting...', false);
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 400);
+            if (data.success && data.user) {
+                applyLoginSuccess(data.user);
             } else {
                 showAlert(data.error || 'Failed to create account.');
                 submitBtn.disabled = false;
@@ -234,36 +264,56 @@
         }
     }
 
-    // Clerk mount check
-    document.addEventListener("DOMContentLoaded", function () {
-        <% if (typeof clerkPublishableKey !== 'undefined' && clerkPublishableKey) { %>
-        const initSignIn = async () => {
-            try {
-                if (window.Clerk) {
-                    await window.Clerk.load();
-                    const signInDiv = document.getElementById('sign-in-mount');
-                    const builtInDiv = document.getElementById('built-in-auth-container');
-                    if (signInDiv && window.Clerk.mountSignIn) {
-                        signInDiv.style.display = 'block';
-                        if (builtInDiv) builtInDiv.style.display = 'none';
-                        window.Clerk.mountSignIn(signInDiv, { routing: 'hash', forceRedirectUrl: '/' });
-                    }
-                }
-            } catch (err) {
-                console.error("Error mounting Clerk sign in", err);
-            }
-        };
+    function performSignOut() {
+        try {
+            localStorage.removeItem('webtigo_user');
+        } catch (_) {}
 
-        if (window.Clerk) {
-            initSignIn();
-        } else {
-            const checkClerkInterval = setInterval(() => {
-                if (window.Clerk) {
-                    clearInterval(checkClerkInterval);
-                    initSignIn();
+        fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
+            if (window.Clerk && window.Clerk.signOut) {
+                window.Clerk.signOut().catch(() => {});
+            }
+            window.location.href = '/signin';
+        });
+    }
+
+    // Check on page load if user is already signed in via localStorage
+    document.addEventListener("DOMContentLoaded", function () {
+        try {
+            const stored = localStorage.getItem('webtigo_user');
+            if (stored) {
+                const u = JSON.parse(stored);
+                if (u && u.name) {
+                    const alreadyBox = document.getElementById('already-signed-in');
+                    const authBox = document.getElementById('built-in-auth-container');
+                    const nameEl = document.getElementById('logged-user-name');
+                    const emailEl = document.getElementById('logged-user-email');
+
+                    if (nameEl) nameEl.textContent = u.name;
+                    if (emailEl) emailEl.textContent = u.email || '';
+                    if (alreadyBox) alreadyBox.style.display = 'block';
+                    if (authBox) authBox.style.display = 'none';
+                    return;
                 }
-            }, 100);
+            }
+        } catch (_) {}
+
+        // If Clerk loaded and user is authenticated on Clerk, sync automatically
+        if (window.Clerk && window.Clerk.user) {
+            const cu = window.Clerk.user;
+            const clerkName = cu.fullName || cu.firstName || 'Clerk Member';
+            const clerkEmail = cu.primaryEmailAddress ? cu.primaryEmailAddress.emailAddress : 'clerk@webtigo.app';
+            
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: clerkEmail, mode: 'demo' })
+            }).then(r => r.json()).then(data => {
+                if (data.user) {
+                    data.user.name = clerkName;
+                    applyLoginSuccess(data.user);
+                }
+            }).catch(() => {});
         }
-        <% } %>
     });
 </script>

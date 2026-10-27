@@ -303,12 +303,48 @@
     }
 </script>
 
-<div class="glass-card" style="max-width: 800px; margin: 3rem auto; padding: 2rem; position: relative; text-align: center;">
-    <h2 style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">Unlocking the Hidden Language of Sound</h2>
-    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
-        We live our entire lives swimming in an invisible ocean of sound waves. Every passing car, every chirping bird, the hum of your refrigerator, and even your own voice are constantly filling the air with vibrations. Most of the time, we just hear the noise and move on. But what if you could actually see that sound? What if you could pinpoint the exact mathematical pitch of the world around you?
+<div class="glass-card" style="max-width: 800px; margin: 3rem auto; padding: 2.5rem; position: relative; text-align: left;">
+    <h2 style="color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; text-align: center; font-size: 1.8rem;">
+        How Pitch & Audio Frequency Detection Works
+    </h2>
+    <p style="color: rgba(255,255,255,0.85); line-height: 1.8; margin-bottom: 1.5rem;">
+        Every musical note corresponds to a specific physical frequency. When you play a guitar string, sing a vocal note, or whistle into your microphone, the air vibrates in periodic cycles. The Webtigo Frequency Detector uses client-side Fast Fourier Transform (FFT) and autocorrelation algorithms to compute the exact pitch in real time.
     </p>
-    <a href="/blog/frequency-detector" class="secondary-btn" style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
-        Read Full Guide on our Blog
-    </a>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        <div style="background: rgba(255, 255, 255, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h4 style="color: #60a5fa; margin-bottom: 0.5rem; font-size: 1.1rem;">Real-Time Mode</h4>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Continuously tracks live microphone input 60 times per second. Ideal for vocal pitch training, whistle tests, and observing live room acoustics.
+            </p>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h4 style="color: #34d399; margin-bottom: 0.5rem; font-size: 1.1rem;">Constant Mode</h4>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Records a 3-second sample of a sustained note, trims outliers using median filtering, and locks in an exact averaged pitch. Includes a one-click button to play the detected pitch back in our tone generator!
+            </p>
+        </div>
+    </div>
+
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem;">
+        <h3 style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">Audio Detection FAQs</h3>
+        <div style="margin-bottom: 1.25rem;">
+            <h5 style="color: var(--primary); font-size: 1rem; margin-bottom: 0.35rem;">Are my microphone recordings sent to any server?</h5>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Never. The Web Audio API operates exclusively within your local browser sandbox. No audio streams or microphone data ever leave your device.
+            </p>
+        </div>
+        <div>
+            <h5 style="color: var(--primary); font-size: 1rem; margin-bottom: 0.35rem;">How can I improve detection accuracy?</h5>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Sing or play a steady, sustained tone close to your microphone in a quiet room. Avoid background music or air conditioners which can introduce harmonic interference.
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="/blog/frequency-detector" class="secondary-btn" style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+            Read Full Frequency Detector Guide on our Blog &rarr;
+        </a>
+    </div>
 </div>

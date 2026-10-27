@@ -409,13 +409,47 @@
 
   <!-- down side -->
   <div class="ad-container"
-    style="max-width: 800px; min-width: 300px; min-height: 250px; margin: 2rem auto; text-align: center; padding: 0 1rem; overflow: hidden; display: block;">
+    style="max-width: 800px; min-width: 300px; min-height: 250px; margin: 2rem auto; text-align: center; padding: 0 1rem; overflow: hidden; display: block; width: 100%; box-sizing: border-box;">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8054743572805756"
       crossorigin="anonymous"></script>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8054743572805756" data-ad-slot="8840405516"
+    <ins class="adsbygoogle" style="display:block; min-width: 250px; min-height: 250px; width: 100%;" data-ad-client="ca-pub-8054743572805756" data-ad-slot="8840405516"
       data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
+      (function () {
+        function triggerAd() {
+          var adIns = document.querySelector('.ad-container ins.adsbygoogle');
+          if (!adIns || adIns.getAttribute('data-adsbygoogle-status')) return;
+          var width = adIns.offsetWidth || (adIns.parentElement ? adIns.parentElement.offsetWidth : 0);
+          if (width > 0) {
+            try {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (err) {
+              console.warn('AdSense slot init handled:', err);
+            }
+          } else if (typeof ResizeObserver !== 'undefined') {
+            var ro = new ResizeObserver(function (entries) {
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].contentRect.width > 0 && !adIns.getAttribute('data-adsbygoogle-status')) {
+                  ro.disconnect();
+                  try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                  } catch (e) {}
+                  break;
+                }
+              }
+            });
+            ro.observe(adIns.parentElement || adIns);
+          }
+        }
+
+        if (document.readyState === 'complete') {
+          setTimeout(triggerAd, 50);
+        } else {
+          window.addEventListener('load', function () {
+            setTimeout(triggerAd, 50);
+          });
+        }
+      })();
     </script>
   </div>
 
@@ -1000,6 +1034,83 @@
       audio.addEventListener('pause', function () {
         updateUI(false);
       });
+    })();
+  </script>
+
+  <!-- Universal Client Auth Hydration & Dropdown Manager -->
+  <script>
+    (function () {
+      function syncAuthUI() {
+        var userMenuBtn = document.getElementById('user-menu-btn');
+        var authContainer = document.getElementById('auth-nav-container');
+        var stored = null;
+        try {
+          stored = localStorage.getItem('webtigo_user');
+        } catch (_) {}
+
+        if (stored && !userMenuBtn && authContainer) {
+          try {
+            var u = JSON.parse(stored);
+            if (u && u.name) {
+              authContainer.innerHTML = [
+                '<div class="user-badge-dropdown" style="position: relative;">',
+                '  <button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.35rem 0.85rem; border-radius: 9999px; color: white; cursor: pointer;">',
+                '    <span style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">' + (u.name.charAt(0).toUpperCase()) + '</span>',
+                '    <span style="font-size: 0.9rem; font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + u.name + '</span>',
+                '    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>',
+                '  </button>',
+                '  <div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 200px; padding: 0.75rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">',
+                '    <div style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);">',
+                '      <div style="font-weight: 600; font-size: 0.9rem; color: white;">' + u.name + '</div>',
+                '      <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis;">' + (u.email || '') + '</div>',
+                '      <div style="margin-top: 4px; display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">' + (u.role || 'Member') + '</div>',
+                '    </div>',
+                '    <button type="button" onclick="handleLogout()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">Sign Out</button>',
+                '  </div>',
+                '</div>'
+              ].join('');
+
+              // Also ensure server cookie is synced
+              fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: u.email || 'member@webtigo.app', mode: 'demo' })
+              }).catch(function () {});
+            }
+          } catch (_) {}
+        }
+      }
+
+      // Handle user dropdown toggle
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('#user-menu-btn');
+        var dd = document.getElementById('user-menu-dropdown');
+        if (btn && dd) {
+          dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+          e.stopPropagation();
+        } else if (dd && !e.target.closest('#user-menu-dropdown')) {
+          dd.style.display = 'none';
+        }
+      });
+
+      window.handleLogout = function () {
+        try {
+          localStorage.removeItem('webtigo_user');
+        } catch (_) {}
+
+        fetch('/api/auth/logout', { method: 'POST' }).finally(function () {
+          if (window.Clerk && window.Clerk.signOut) {
+            window.Clerk.signOut().catch(function () {});
+          }
+          window.location.href = '/';
+        });
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncAuthUI);
+      } else {
+        syncAuthUI();
+      }
     })();
   </script>
   <!-- Webtigo Share & Direct Export Hub -->

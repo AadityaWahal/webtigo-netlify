@@ -109,18 +109,62 @@
 </script>
 
 <div class="glass-card"
-    style="margin-top: 3rem; padding: 2rem; position: relative; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
+    style="margin-top: 3rem; padding: 2.5rem; position: relative; max-width: 800px; margin-left: auto; margin-right: auto;">
     <h2
-        style="color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
-        Master Your Text</h2>
-    <p style="color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 1.5rem; text-align: left;">
-        Have you ever accidentally typed an entire, massive paragraph only to realize your "Caps Lock" key was turned on
-        the whole time? Or maybe you are trying to write a professional title for a YouTube video, but you aren't sure
-        which words are supposed to be capitalized. Retyping everything from scratch is incredibly frustrating and a
-        massive waste of time. Our Case Converter is the ultimate shortcut...
+        style="color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; font-size: 1.8rem; text-align: center;">
+        Comprehensive Guide to Text Case Formatting
+    </h2>
+    <p style="color: rgba(255,255,255,0.85); line-height: 1.8; margin-bottom: 1.5rem; text-align: left;">
+        Whether you are writing code, publishing YouTube video titles, preparing legal documents, or fixing text typed accidentally in ALL CAPS, capitalization conventions matter. Different industries and programming ecosystems follow strict casing conventions to ensure clarity, readability, and syntax validity.
     </p>
-    <a href="/blog/case-converter" class="secondary-btn"
-        style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
-        Read Full Guide on our Blog
-    </a>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; text-align: left;">
+        <div style="background: rgba(255, 255, 255, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h4 style="color: #60a5fa; margin-bottom: 0.5rem; font-size: 1.1rem;">camelCase</h4>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                The first letter is lowercase and each subsequent word starts with a capital letter. Standard in JavaScript, TypeScript, Java, and JSON keys (e.g., <code>userId</code>, <code>getUserProfile</code>).
+            </p>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h4 style="color: #34d399; margin-bottom: 0.5rem; font-size: 1.1rem;">snake_case</h4>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Words are separated by underscores in all lowercase. Standard in Python, SQL column names, database schemas, and environment variables (e.g., <code>created_at</code>, <code>api_secret_key</code>).
+            </p>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h4 style="color: #f472b6; margin-bottom: 0.5rem; font-size: 1.1rem;">Title Case</h4>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Capitalizes the first letter of each significant word. Standard for blog headlines, YouTube titles, book titles, and article subheadings.
+            </p>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <h4 style="color: #fbbf24; margin-bottom: 0.5rem; font-size: 1.1rem;">Sentence case</h4>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Only the very first character of each sentence is capitalized, along with proper nouns. The most natural reading style for paragraphs, essays, and user interface labels.
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: left; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem;">
+        <h3 style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">Frequently Asked Questions</h3>
+        <div style="margin-bottom: 1.25rem;">
+            <h5 style="color: var(--primary); font-size: 1rem; margin-bottom: 0.35rem;">Does Webtigo store my text or clipboard data?</h5>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                No. Conversion is executed 100% locally in your web browser using JavaScript string transformations. Nothing you type or paste is transmitted to or stored on our servers.
+            </p>
+        </div>
+        <div>
+            <h5 style="color: var(--primary); font-size: 1rem; margin-bottom: 0.35rem;">Is there a word or character limit?</h5>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                No limit. You can paste full legal contracts, codebases, or lengthy essays into the editor and convert thousands of words instantaneously.
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="/blog/case-converter" class="secondary-btn"
+            style="background: transparent; color: var(--primary); border: 1px solid var(--primary); text-decoration: none; display: inline-block; padding: 0.75rem 1.5rem;">
+            Read Full Case Converter Guide on our Blog &rarr;
+        </a>
+    </div>
 </div>
