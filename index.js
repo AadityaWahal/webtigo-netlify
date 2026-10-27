@@ -212,8 +212,9 @@ app.use((req, res, next) => {
     if (!currentUser && req.auth && req.auth.userId) {
         currentUser = {
             id: req.auth.userId,
-            name: 'Clerk Member',
-            email: 'clerk-user',
+            name: '',
+            email: '',
+            picture: null,
             role: 'member',
             provider: 'clerk'
         };
@@ -766,6 +767,35 @@ app.post('/api/auth/signup', (req, res) => {
     } catch (err) {
         console.error('Signup error:', err);
         return res.status(500).json({ success: false, error: 'Registration failed' });
+    }
+});
+
+app.post('/api/auth/sync', (req, res) => {
+    try {
+        const { id, name, email, picture, avatar } = req.body || {};
+        const profilePic = picture || avatar || null;
+        const cleanName = (name && name !== 'Clerk Member' && name !== 'Guest Member') 
+            ? name 
+            : (email && email !== 'clerk-user' ? email.split('@')[0] : 'Member');
+        const cleanEmail = (email && email !== 'clerk-user') ? email : '';
+        const user = {
+            id: id || ('user_' + uuidv4().substring(0, 8)),
+            name: cleanName,
+            email: cleanEmail,
+            picture: profilePic,
+            role: 'member'
+        };
+
+        res.cookie('webtigo_user', JSON.stringify(user), {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: false,
+            sameSite: 'lax',
+            path: '/'
+        });
+
+        return res.json({ success: true, user });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: 'Sync failed' });
     }
 });
 

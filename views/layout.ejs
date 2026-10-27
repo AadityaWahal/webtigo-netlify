@@ -264,8 +264,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Clerk Auth - loaded only on sign-in page to ensure instant zero-latency loading of all tool pages -->
-  <% if (typeof clerkPublishableKey !== 'undefined' && clerkPublishableKey && typeof currentPath !== 'undefined' && currentPath === '/signin') { %>
+  <!-- Clerk Auth SDK -->
+  <% if (typeof clerkPublishableKey !== 'undefined' && clerkPublishableKey) { %>
     <% if (typeof clerkFrontendApi !== 'undefined' && clerkFrontendApi) { %>
     <script async crossorigin="anonymous"
       data-clerk-publishable-key="<%= clerkPublishableKey %>"
@@ -335,21 +335,34 @@
     <!-- Right Actions: ALWAYS Visible Sign In Button + Mobile Hamburger Toggle -->
     <div class="navbar-actions">
       <div id="auth-nav-container">
-        <% if (typeof user !== 'undefined' && user) { %>
-          <div class="user-badge-dropdown" style="position: relative;">
-            <button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.35rem 0.85rem; border-radius: 9999px; color: white; cursor: pointer; transition: all 0.2s ease;">
-              <span style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
-                <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
-              </span>
+        <% if (typeof user !== 'undefined' && user && user.name) { %>
+          <div class="user-badge-dropdown" id="server-user-badge" style="position: relative;">
+            <button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.25rem 0.75rem 0.25rem 0.35rem; border-radius: 9999px; color: white; cursor: pointer; transition: all 0.2s ease;">
+              <% if (user.picture || user.avatar || user.imageUrl) { %>
+                <img src="<%= user.picture || user.avatar || user.imageUrl %>" alt="<%= user.name %>" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid #38bdf8;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                <span style="display: none; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                  <%= user.name.charAt(0).toUpperCase() %>
+                </span>
+              <% } else { %>
+                <span style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                  <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+                </span>
+              <% } %>
               <span style="font-size: 0.9rem; font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.name %></span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
-            <div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 200px; padding: 0.75rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">
-              <div style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
-                <div style="font-weight: 600; font-size: 0.9rem; color: white;"><%= user.name %></div>
-                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis;"><%= user.email %></div>
-                <div style="margin-top: 4px; display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">
-                  <%= user.role || 'Member' %>
+            <div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 220px; padding: 0.85rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">
+              <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0.75rem; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <% if (user.picture || user.avatar || user.imageUrl) { %>
+                  <img src="<%= user.picture || user.avatar || user.imageUrl %>" alt="<%= user.name %>" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8;">
+                <% } else { %>
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: white;">
+                    <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+                  </div>
+                <% } %>
+                <div style="overflow: hidden;">
+                  <div style="font-weight: 600; font-size: 0.9rem; color: white; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><%= user.name %></div>
+                  <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.email || '' %></div>
                 </div>
               </div>
               <button type="button" onclick="handleLogout()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
@@ -358,13 +371,12 @@
               </button>
             </div>
           </div>
-        <% } else { %>
-          <a href="/signin" id="sign-in-btn" class="sign-in-nav-btn" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white !important; padding: 0.45rem 1.1rem; border-radius: 9999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35); transition: transform 0.2s;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span>Sign In</span>
-          </a>
         <% } %>
-        <div id="user-button"></div>
+        <a href="/signin" id="sign-in-btn" class="sign-in-nav-btn" style="<%= (typeof user !== 'undefined' && user && user.name) ? 'display: none !important;' : 'display: inline-flex;' %> align-items: center; gap: 6px; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white !important; padding: 0.45rem 1.1rem; border-radius: 9999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35); transition: transform 0.2s;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span>Sign In</span>
+        </a>
+        <div id="user-button" style="display: none;"></div>
       </div>
 
       <!-- Mobile Hamburger Toggle Button -->
@@ -593,21 +605,66 @@
       // Initialize Clerk UI (if Clerk keys are provided)
       <% if (typeof clerkPublishableKey !== 'undefined' && clerkPublishableKey) { %>
       const initClerk = async () => {
-        if (window.Clerk) {
-          try {
-            await window.Clerk.load();
-            const userButtonEl = document.getElementById('user-button');
-            const signInBtnEl = document.getElementById('sign-in-btn');
+        if (!window.Clerk) return;
+        try {
+          await window.Clerk.load();
+          const userButtonEl = document.getElementById('user-button');
+          const signInBtnEl = document.getElementById('sign-in-btn');
 
-            if (window.Clerk.user) {
-              if (userButtonEl) window.Clerk.mountUserButton(userButtonEl);
-              if (signInBtnEl) signInBtnEl.style.display = 'none';
-            } else {
-              if (signInBtnEl) signInBtnEl.style.display = 'inline-flex';
+          if (window.Clerk.user) {
+            const cu = window.Clerk.user;
+            const realName = cu.fullName || [cu.firstName, cu.lastName].filter(Boolean).join(' ') || cu.username || (cu.primaryEmailAddress ? cu.primaryEmailAddress.emailAddress.split('@')[0] : 'Member');
+            const realEmail = cu.primaryEmailAddress ? cu.primaryEmailAddress.emailAddress : '';
+            const realAvatar = cu.imageUrl || cu.profileImageUrl || '';
+
+            const userObj = {
+              id: cu.id,
+              name: realName,
+              email: realEmail,
+              picture: realAvatar,
+              role: 'member',
+              provider: 'clerk'
+            };
+
+            localStorage.setItem('webtigo_user', JSON.stringify(userObj));
+
+            if (signInBtnEl) signInBtnEl.style.setProperty('display', 'none', 'important');
+
+            // If Clerk provides userButton, mount it for rich account popover
+            if (userButtonEl) {
+              userButtonEl.style.display = 'inline-flex';
+              window.Clerk.mountUserButton(userButtonEl, {
+                afterSignOutUrl: '/',
+                userProfileMode: 'modal'
+              });
+              // Hide fallback server badge if Clerk button is mounted
+              const serverBadge = document.getElementById('server-user-badge');
+              if (serverBadge) serverBadge.style.display = 'none';
+              const clientBadge = document.getElementById('client-user-badge');
+              if (clientBadge) clientBadge.style.display = 'none';
             }
-          } catch (error) {
-            console.error('Error loading Clerk:', error);
+
+            // Sync with backend
+            fetch('/api/auth/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(userObj)
+            }).catch(function() {});
+          } else {
+            try {
+              const stored = localStorage.getItem('webtigo_user');
+              if (stored) {
+                const u = JSON.parse(stored);
+                if (u && u.provider === 'clerk') {
+                  localStorage.removeItem('webtigo_user');
+                  if (signInBtnEl) signInBtnEl.style.display = 'inline-flex';
+                  if (userButtonEl) userButtonEl.style.display = 'none';
+                }
+              }
+            } catch (_) {}
           }
+        } catch (error) {
+          console.error('Error loading Clerk:', error);
         }
       };
 
@@ -620,6 +677,7 @@
             initClerk();
           }
         }, 100);
+        setTimeout(() => clearInterval(checkClerkInterval), 10000);
       }
       <% } %>
     });
@@ -1043,39 +1101,56 @@
       function syncAuthUI() {
         var userMenuBtn = document.getElementById('user-menu-btn');
         var authContainer = document.getElementById('auth-nav-container');
+        var signInBtn = document.getElementById('sign-in-btn');
         var stored = null;
         try {
           stored = localStorage.getItem('webtigo_user');
         } catch (_) {}
 
-        if (stored && !userMenuBtn && authContainer) {
+        if (stored) {
           try {
             var u = JSON.parse(stored);
-            if (u && u.name) {
-              authContainer.innerHTML = [
-                '<div class="user-badge-dropdown" style="position: relative;">',
-                '  <button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.35rem 0.85rem; border-radius: 9999px; color: white; cursor: pointer;">',
-                '    <span style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">' + (u.name.charAt(0).toUpperCase()) + '</span>',
-                '    <span style="font-size: 0.9rem; font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + u.name + '</span>',
-                '    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>',
-                '  </button>',
-                '  <div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 200px; padding: 0.75rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">',
-                '    <div style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);">',
-                '      <div style="font-weight: 600; font-size: 0.9rem; color: white;">' + u.name + '</div>',
-                '      <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis;">' + (u.email || '') + '</div>',
-                '      <div style="margin-top: 4px; display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">' + (u.role || 'Member') + '</div>',
-                '    </div>',
-                '    <button type="button" onclick="handleLogout()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">Sign Out</button>',
-                '  </div>',
-                '</div>'
-              ].join('');
+            if (u && (u.name || u.email)) {
+              if (u.name === 'Clerk Member') {
+                u.name = u.email ? u.email.split('@')[0] : 'Member';
+              }
+              if (signInBtn) signInBtn.style.setProperty('display', 'none', 'important');
 
-              // Also ensure server cookie is synced
-              fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: u.email || 'member@webtigo.app', mode: 'demo' })
-              }).catch(function () {});
+              if (!userMenuBtn && authContainer) {
+                var pic = u.picture || u.avatar || u.imageUrl;
+                var picHtml = pic 
+                  ? '<img src="' + pic + '" alt="' + u.name + '" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid #38bdf8;" onerror="this.style.display=\'none\'; if(this.nextElementSibling) this.nextElementSibling.style.display=\'flex\';">' +
+                    '<span style="display: none; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">' + (u.name.charAt(0).toUpperCase()) + '</span>'
+                  : '<span style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">' + (u.name.charAt(0).toUpperCase()) + '</span>';
+
+                var dropdownPicHtml = pic 
+                  ? '<img src="' + pic + '" alt="' + u.name + '" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8;">'
+                  : '<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: white;">' + (u.name.charAt(0).toUpperCase()) + '</div>';
+
+                var badgeDiv = document.createElement('div');
+                badgeDiv.className = 'user-badge-dropdown';
+                badgeDiv.id = 'client-user-badge';
+                badgeDiv.style.position = 'relative';
+                badgeDiv.innerHTML = [
+                  '<button type="button" id="user-menu-btn" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.25rem 0.75rem 0.25rem 0.35rem; border-radius: 9999px; color: white; cursor: pointer; transition: all 0.2s ease;">',
+                  picHtml,
+                  '  <span style="font-size: 0.9rem; font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + u.name + '</span>',
+                  '  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>',
+                  '</button>',
+                  '<div id="user-menu-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; min-width: 220px; padding: 0.85rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;">',
+                  '  <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0.75rem; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08);">',
+                  dropdownPicHtml,
+                  '    <div style="overflow: hidden;">',
+                  '      <div style="font-weight: 600; font-size: 0.9rem; color: white; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + u.name + '</div>',
+                  '      <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + (u.email || '') + '</div>',
+                  '    </div>',
+                  '  </div>',
+                  '  <button type="button" onclick="handleLogout()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">Sign Out</button>',
+                  '</div>'
+                ].join('');
+
+                authContainer.prepend(badgeDiv);
+              }
             }
           } catch (_) {}
         }

@@ -1,13 +1,20 @@
 <div class="glass-card" style="max-width: 500px; margin: 3rem auto; padding: 2.5rem 2rem; border-radius: 1.25rem;">
     <!-- If User is already signed in (Server or Client) -->
-    <div id="already-signed-in" style="<%= (typeof user !== 'undefined' && user) ? 'display: block;' : 'display: none;' %> text-align: center;">
-        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: white; font-size: 1.75rem; font-weight: 700; margin-bottom: 1.25rem; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);">
-            ✓
+    <div id="already-signed-in" style="<%= (typeof user !== 'undefined' && user && user.name) ? 'display: block;' : 'display: none;' %> text-align: center;">
+        <div style="margin-bottom: 1.25rem; display: flex; justify-content: center;">
+            <img id="logged-user-avatar" 
+                 src="<%= (typeof user !== 'undefined' && user && (user.picture || user.avatar || user.imageUrl)) ? (user.picture || user.avatar || user.imageUrl) : '' %>" 
+                 alt="Profile Picture" 
+                 style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #38bdf8; box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); display: <%= (typeof user !== 'undefined' && user && (user.picture || user.avatar || user.imageUrl)) ? 'block' : 'none' %>;"
+                 onerror="this.style.display='none'; document.getElementById('logged-user-avatar-fallback').style.display='inline-flex';">
+            <div id="logged-user-avatar-fallback" style="display: <%= (typeof user !== 'undefined' && user && (user.picture || user.avatar || user.imageUrl)) ? 'none' : 'inline-flex' %>; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; font-size: 2rem; font-weight: 700; box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);">
+                <%= (typeof user !== 'undefined' && user && user.name) ? user.name.charAt(0).toUpperCase() : 'U' %>
+            </div>
         </div>
         <h2 style="color: white; font-size: 1.6rem; margin-bottom: 0.5rem;">You are Signed In</h2>
         <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem;">
-            Signed in as <strong id="logged-user-name" style="color: #38bdf8;"><%= (typeof user !== 'undefined' && user) ? user.name : 'Member' %></strong>
-            <span id="logged-user-email" style="display: block; font-size: 0.85rem; color: #64748b; margin-top: 4px;"><%= (typeof user !== 'undefined' && user) ? user.email : '' %></span>
+            Signed in as <strong id="logged-user-name" style="color: #38bdf8;"><%= (typeof user !== 'undefined' && user && user.name && user.name !== 'Clerk Member' ? user.name : 'Member') %></strong>
+            <span id="logged-user-email" style="display: block; font-size: 0.85rem; color: #64748b; margin-top: 4px;"><%= (typeof user !== 'undefined' && user && user.email && user.email !== 'clerk-user' ? user.email : '') %></span>
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -277,43 +284,100 @@
         });
     }
 
-    // Check on page load if user is already signed in via localStorage
+    // Check on page load if user is already signed in via localStorage or Clerk
     document.addEventListener("DOMContentLoaded", function () {
+        function showProfile(u) {
+            if (!u) return;
+            const alreadyBox = document.getElementById('already-signed-in');
+            const authBox = document.getElementById('built-in-auth-container');
+            const nameEl = document.getElementById('logged-user-name');
+            const emailEl = document.getElementById('logged-user-email');
+            const avatarImg = document.getElementById('logged-user-avatar');
+            const avatarFallback = document.getElementById('logged-user-avatar-fallback');
+
+            const displayName = (u.name && u.name !== 'Clerk Member') ? u.name : (u.email ? u.email.split('@')[0] : 'Member');
+            const displayEmail = (u.email && u.email !== 'clerk-user') ? u.email : '';
+            const pic = u.picture || u.avatar || u.imageUrl;
+
+            if (nameEl) nameEl.textContent = displayName;
+            if (emailEl) emailEl.textContent = displayEmail;
+
+            if (pic && avatarImg) {
+                avatarImg.src = pic;
+                avatarImg.style.display = 'block';
+                if (avatarFallback) avatarFallback.style.display = 'none';
+            } else if (avatarFallback) {
+                avatarFallback.textContent = displayName.charAt(0).toUpperCase();
+                avatarFallback.style.display = 'inline-flex';
+                if (avatarImg) avatarImg.style.display = 'none';
+            }
+
+            if (alreadyBox) alreadyBox.style.display = 'block';
+            if (authBox) authBox.style.display = 'none';
+        }
+
         try {
             const stored = localStorage.getItem('webtigo_user');
             if (stored) {
                 const u = JSON.parse(stored);
-                if (u && u.name) {
-                    const alreadyBox = document.getElementById('already-signed-in');
-                    const authBox = document.getElementById('built-in-auth-container');
-                    const nameEl = document.getElementById('logged-user-name');
-                    const emailEl = document.getElementById('logged-user-email');
-
-                    if (nameEl) nameEl.textContent = u.name;
-                    if (emailEl) emailEl.textContent = u.email || '';
-                    if (alreadyBox) alreadyBox.style.display = 'block';
-                    if (authBox) authBox.style.display = 'none';
-                    return;
+                if (u && (u.name || u.email)) {
+                    showProfile(u);
                 }
             }
         } catch (_) {}
 
-        // If Clerk loaded and user is authenticated on Clerk, sync automatically
-        if (window.Clerk && window.Clerk.user) {
-            const cu = window.Clerk.user;
-            const clerkName = cu.fullName || cu.firstName || 'Clerk Member';
-            const clerkEmail = cu.primaryEmailAddress ? cu.primaryEmailAddress.emailAddress : 'clerk@webtigo.app';
-            
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: clerkEmail, mode: 'demo' })
-            }).then(r => r.json()).then(data => {
-                if (data.user) {
-                    data.user.name = clerkName;
-                    applyLoginSuccess(data.user);
+        function handleClerkOnSignIn() {
+            if (!window.Clerk) return;
+            window.Clerk.load().then(function () {
+                if (window.Clerk.user) {
+                    const cu = window.Clerk.user;
+                    const realName = cu.fullName || [cu.firstName, cu.lastName].filter(Boolean).join(' ') || cu.username || (cu.primaryEmailAddress ? cu.primaryEmailAddress.emailAddress.split('@')[0] : 'Member');
+                    const realEmail = cu.primaryEmailAddress ? cu.primaryEmailAddress.emailAddress : '';
+                    const realAvatar = cu.imageUrl || cu.profileImageUrl || '';
+
+                    const userObj = {
+                        id: cu.id,
+                        name: realName,
+                        email: realEmail,
+                        picture: realAvatar,
+                        role: 'member',
+                        provider: 'clerk'
+                    };
+
+                    localStorage.setItem('webtigo_user', JSON.stringify(userObj));
+                    showProfile(userObj);
+
+                    fetch('/api/auth/sync', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userObj)
+                    }).catch(function () {});
+                } else {
+                    const clerkContainer = document.getElementById('clerk-container');
+                    const signInMount = document.getElementById('sign-in-mount');
+                    if (clerkContainer && signInMount) {
+                        clerkContainer.style.display = 'block';
+                        window.Clerk.mountSignIn(signInMount, {
+                            afterSignInUrl: '/',
+                            afterSignUpUrl: '/'
+                        });
+                    }
                 }
-            }).catch(() => {});
+            }).catch(function (e) {
+                console.warn('Clerk init in signin:', e);
+            });
+        }
+
+        if (window.Clerk) {
+            handleClerkOnSignIn();
+        } else {
+            const clerkPoll = setInterval(function () {
+                if (window.Clerk) {
+                    clearInterval(clerkPoll);
+                    handleClerkOnSignIn();
+                }
+            }, 100);
+            setTimeout(() => clearInterval(clerkPoll), 10000);
         }
     });
 </script>
