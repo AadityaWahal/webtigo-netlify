@@ -182,15 +182,42 @@
             const pdfDoc = await PDFDocument.create();
 
             for (const file of selectedFiles) {
+                let image = null;
                 const arrayBuffer = await file.arrayBuffer();
-                let image;
 
-                if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
-                    image = await pdfDoc.embedJpg(arrayBuffer);
-                } else if (file.type === 'image/png') {
-                    image = await pdfDoc.embedPng(arrayBuffer);
-                } else {
-                    continue; // Skip unsupported
+                try {
+                    if (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.name.match(/\.jpe?g$/i)) {
+                        image = await pdfDoc.embedJpg(arrayBuffer);
+                    } else if (file.type === 'image/png' || file.name.match(/\.png$/i)) {
+                        image = await pdfDoc.embedPng(arrayBuffer);
+                    }
+                } catch (embedErr) {
+                    console.warn('Native embed failed, converting via canvas fallback:', embedErr);
+                    image = null;
+                }
+
+                // Canvas fallback for WebP, BMP, corrupted color profiles, or unsupported PNG variants
+                if (!image) {
+                    const canvasJpegBuffer = await new Promise((res, rej) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const c = document.createElement('canvas');
+                            c.width = img.naturalWidth || img.width;
+                            c.height = img.naturalHeight || img.height;
+                            const ctx = c.getContext('2d');
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, c.width, c.height);
+                            ctx.drawImage(img, 0, 0);
+                            c.toBlob(async (b) => {
+                                if (b) {
+                                    res(await b.arrayBuffer());
+                                } else rej(new Error('Canvas conversion failed'));
+                            }, 'image/jpeg', 0.92);
+                        };
+                        img.onerror = rej;
+                        img.src = URL.createObjectURL(file);
+                    });
+                    image = await pdfDoc.embedJpg(canvasJpegBuffer);
                 }
 
                 // Get dimensions and add page

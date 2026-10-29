@@ -71,39 +71,96 @@
 <script>
     async function resizeImage() {
         const file = document.getElementById('res-file').files[0];
-        const width = document.getElementById('res-width').value;
-        const height = document.getElementById('res-height').value;
+        const width = parseInt(document.getElementById('res-width').value, 10);
+        const height = parseInt(document.getElementById('res-height').value, 10);
 
-        if (!file) return alert('Select image');
+        if (!file) return alert('Select an image');
+        if (!width || !height || width <= 0 || height <= 0) return alert('Please enter valid width and height dimensions.');
 
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('width', width);
-        formData.append('height', height);
+        const originalName = file.name.replace(/\.[^/.]+$/, "");
+        const isPng = file.type === 'image/png' || file.name.match(/\.png$/i);
+        const ext = isPng ? 'png' : 'jpg';
+        const mimeType = isPng ? 'image/png' : 'image/jpeg';
+        const filename = `webtigo-resized-${width}x${height}-${originalName}.${ext}`;
 
+        let blob = null;
+
+        // Try client-side canvas resize first (instant, works for any size up to 50MB+)
         try {
+            blob = await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    if (!isPng) {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, width, height);
+                    }
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob((b) => {
+                        if (b) resolve(b);
+                        else reject(new Error('Canvas export failed'));
+                    }, mimeType, 0.92);
+                };
+                img.onerror = () => reject(new Error('Image decode failed'));
+                img.src = URL.createObjectURL(file);
+            });
+        } catch (clientErr) {
+            console.warn('Client-side resize fallback to server:', clientErr);
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('width', width);
+            formData.append('height', height);
+
             const res = await fetch('/api/resize-image', { method: 'POST', body: formData });
             if (!res.ok) throw new Error('Failed to resize image');
-
-            const blob = await res.blob();
-            const originalName = file.name.replace(/\.[^/.]+$/, "");
-            const filename = `webtigo-resized-${width}x${height}-${originalName}.jpg`;
-
-            if (window.WebtigoShare) {
-                window.WebtigoShare.renderHub('#res-share-hub', {
-                    blob: blob,
-                    filename: filename,
-                    title: `Resized Image (${width}x${height}) - Webtigo`,
-                    text: `Resized image (${width}x${height}) using Webtigo: ${filename}`,
-                    mimeType: 'image/jpeg',
-                    subject: 'Resized Image from Webtigo'
-                });
-            }
-
-            document.getElementById('result').style.display = 'block';
-        } catch (e) {
-            alert(e.message);
+            blob = await res.blob();
         }
+
+        const previewUrl = URL.createObjectURL(blob);
+        let previewImg = document.getElementById('res-preview-img');
+        if (!previewImg) {
+            previewImg = document.createElement('img');
+            previewImg.id = 'res-preview-img';
+            previewImg.style.maxWidth = '100%';
+            previewImg.style.maxHeight = '250px';
+            previewImg.style.borderRadius = '8px';
+            previewImg.style.marginTop = '1rem';
+            previewImg.style.marginBottom = '1rem';
+            document.getElementById('result').insertBefore(previewImg, document.getElementById('res-share-hub'));
+        }
+        previewImg.src = previewUrl;
+
+        let downloadLink = document.getElementById('res-download-btn');
+        if (!downloadLink) {
+            downloadLink = document.createElement('a');
+            downloadLink.id = 'res-download-btn';
+            downloadLink.className = 'primary-btn';
+            downloadLink.style.display = 'inline-block';
+            downloadLink.style.textDecoration = 'none';
+            downloadLink.style.marginBottom = '1rem';
+            downloadLink.textContent = '⬇️ Download Resized Image';
+            document.getElementById('result').insertBefore(downloadLink, document.getElementById('res-share-hub'));
+        }
+        downloadLink.href = previewUrl;
+        downloadLink.download = filename;
+
+        if (window.WebtigoShare) {
+            window.WebtigoShare.renderHub('#res-share-hub', {
+                blob: blob,
+                filename: filename,
+                title: `Resized Image (${width}x${height}) - Webtigo`,
+                text: `Resized image (${width}x${height}) using Webtigo: ${filename}`,
+                mimeType: mimeType,
+                subject: 'Resized Image from Webtigo'
+            });
+        }
+
+        document.getElementById('result').style.display = 'block';
     }
 
     function applyPreset() {

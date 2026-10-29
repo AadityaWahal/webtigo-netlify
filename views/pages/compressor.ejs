@@ -1,4 +1,4 @@
-<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+<div class="glass-card" style="max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem;">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -10,7 +10,8 @@
             "Best Image Compressor",
             "Best Free Image Compressor",
             "Online Photo Compressor",
-            "Compress JPG Online"
+            "Compress JPG Online",
+            "Compress PNG Online"
           ],
           "operatingSystem": "Any",
           "applicationCategory": "UtilitiesApplication",
@@ -46,98 +47,561 @@
       ]
     }
     </script>
+
     <div style="text-align: center; margin-bottom: 1.25rem;">
         <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #34d399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.25rem 0.85rem; border-radius: 999px;">
-            ⚡ Best Free Image Compressor &bull; 100% Private
+            ⚡ Best Free Image Compressor &bull; 100% Private &amp; Unlimited
         </span>
     </div>
-    <h1 style="margin-bottom: 0.75rem; text-align: center; font-size: 2.2rem;">Best Free Image Compressor</h1>
-    <p style="text-align: center; color: rgba(255, 255, 255, 0.78); margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6;">
-        Easily compress JPG, PNG, and WebP images online for <strong>free</strong> with <strong>Webtigo</strong>. Reduce file size up to 90% instantly without losing visible quality.
+
+    <h1 style="margin-bottom: 0.75rem; text-align: center; font-size: 2.2rem; background: linear-gradient(135deg, #ffffff, #a7f3d0); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 800;">
+        Best Free Image Compressor
+    </h1>
+    <p style="text-align: center; color: rgba(255, 255, 255, 0.78); margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Reduce JPG, PNG, WebP, and photos to exact target sizes (KB) instantly with <strong>Webtigo</strong>. Dual client-side &amp; cloud engine handles any file size with zero watermarks.
     </p>
 
-    <div class="form-group">
-        <label>Select Image</label>
-        <input type="file" id="comp-file" accept="image/*">
+    <!-- Upload Drop Zone -->
+    <div class="drop-zone" id="comp-drop-zone"
+        style="border: 2px dashed rgba(52, 211, 153, 0.4); background: rgba(15, 23, 42, 0.5); padding: 2.5rem 1.5rem; text-align: center; border-radius: 1.25rem; cursor: pointer; transition: all 0.25s ease;">
+        <div style="font-size: 3rem; margin-bottom: 0.75rem;">🖼️</div>
+        <p style="margin-bottom: 0.5rem; font-size: 1.2rem; font-weight: 600; color: #f8fafc;">
+            Drag &amp; Drop any image here, or <span style="color: #34d399; text-decoration: underline;">browse files</span>
+        </p>
+        <span style="font-size: 0.85rem; color: #94a3b8; display: inline-block;">
+            Supports PNG, JPG, JPEG, WebP, BMP, GIF &bull; Any size up to 50MB+ &bull; 100% Private
+        </span>
+        <input type="file" id="comp-file" accept="image/*" style="display: none;">
     </div>
 
-    <div class="form-group">
-        <label>Target Size (KB)</label>
-        <input type="number" id="comp-size" value="100" min="10">
+    <!-- Selected File Inspector Card (shown once image is selected) -->
+    <div id="file-info-card" style="display: none; margin-top: 1.5rem; padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.85rem; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <img id="file-thumbnail" src="" alt="Selected Preview" style="width: 52px; height: 52px; object-fit: cover; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3);">
+            <div style="overflow: hidden;">
+                <div id="file-name-label" style="font-weight: 600; color: #f8fafc; font-size: 0.95rem; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 260px;">image.png</div>
+                <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 2px;">
+                    Original: <strong id="file-size-label" style="color: #6ee7b7;">0 KB</strong> &bull; <span id="file-dims-label">0 × 0 px</span>
+                </div>
+            </div>
+        </div>
+        <button type="button" onclick="resetFilePicker()" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.35rem 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+            Change Image
+        </button>
     </div>
 
-    <button class="primary-btn" onclick="compressImage()">Compress</button>
+    <!-- Controls Section -->
+    <div style="margin-top: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <label style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Target File Size (KB)</label>
+            <span style="font-size: 0.8rem; color: #94a3b8;">Max target weight</span>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <input type="number" id="comp-size" value="100" min="5" max="25000"
+                style="flex: 1; padding: 0.75rem 1rem; border-radius: 0.65rem; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.3); color: white; font-size: 1rem; font-family: inherit;">
+            <span style="font-weight: 700; color: #94a3b8; font-size: 0.9rem;">KB</span>
+        </div>
 
-    <div id="result" class="result-area" style="display: none;">
-        <p style="margin-bottom: 0.5rem; color: #34d399; font-weight: 600;">✓ Compression Complete!</p>
+        <!-- Quick Presets -->
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
+            <button type="button" class="preset-pill" onclick="setTargetSize(50)">50 KB</button>
+            <button type="button" class="preset-pill active" onclick="setTargetSize(100)">100 KB</button>
+            <button type="button" class="preset-pill" onclick="setTargetSize(200)">200 KB</button>
+            <button type="button" class="preset-pill" onclick="setTargetSize(500)">500 KB</button>
+            <button type="button" class="preset-pill" onclick="setTargetSize(1000)">1 MB</button>
+            <button type="button" class="preset-pill" onclick="setRelativeTarget(0.4)">-60% Smaller</button>
+            <button type="button" class="preset-pill" onclick="setRelativeTarget(0.2)">-80% Smaller</button>
+        </div>
+
+        <!-- Output Format Selector -->
+        <div style="margin-top: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                Output Format
+            </label>
+            <select id="comp-format"
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.65rem; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.3); color: white; font-size: 0.95rem; font-family: inherit; outline: none;">
+                <option value="auto">Auto (Smart Detect / Optimal Quality &amp; Size)</option>
+                <option value="jpeg">JPEG (.jpg) - Universal compatibility, smallest weight</option>
+                <option value="png">PNG (.png) - Preserves transparency &amp; sharp graphics</option>
+                <option value="webp">WebP (.webp) - Modern next-generation format</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Compress Action Button -->
+    <div style="margin-top: 2rem;">
+        <button id="compress-btn" class="primary-btn" onclick="startCompression()" style="width: 100%; padding: 0.9rem; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <span>⚡ Compress Image Now</span>
+        </button>
+    </div>
+
+    <!-- Live Progress Bar -->
+    <div id="progress-area" style="display: none; margin-top: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.35rem;">
+            <span id="progress-status">Compressing image...</span>
+            <span id="progress-percent">0%</span>
+        </div>
+        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
+            <div id="progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.25s ease;"></div>
+        </div>
+    </div>
+
+    <!-- Compression Result Dashboard -->
+    <div id="result" class="result-area" style="display: none; margin-top: 2rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; text-align: center;">
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; color: #34d399; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.75rem;">
+            <span>✓</span>
+            <span>Image Successfully Compressed!</span>
+        </div>
+
+        <!-- Before / After Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(255,255,255,0.04); padding: 0.75rem 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">Original</div>
+                <div id="res-orig-size" style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-top: 0.25rem;">0 KB</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.04); padding: 0.75rem 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">Compressed</div>
+                <div id="res-new-size" style="font-size: 1.05rem; font-weight: 700; color: #34d399; margin-top: 0.25rem;">0 KB</div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.12); padding: 0.75rem 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <div style="font-size: 0.75rem; color: #6ee7b7; text-transform: uppercase; font-weight: 600;">Saved</div>
+                <div id="res-reduction" style="font-size: 1.05rem; font-weight: 700; color: #10b981; margin-top: 0.25rem;">0%</div>
+            </div>
+        </div>
+
+        <!-- Live Visual Preview of Compressed Image -->
+        <div style="margin-bottom: 1.25rem;">
+            <img id="res-preview-img" src="" alt="Compressed Preview" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 0.65rem; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+        </div>
+
+        <!-- Direct 1-Click Local Download -->
+        <a id="res-direct-download" href="#" download="compressed.jpg" class="primary-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.75rem 1.75rem; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #10b981, #059669); margin-bottom: 1.25rem;">
+            <span>⬇️ Download Compressed Image</span>
+        </a>
+
+        <!-- Webtigo Share & Direct Cloud Hub -->
         <div id="comp-share-hub"></div>
     </div>
 </div>
 
+<style>
+    .preset-pill {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #e2e8f0;
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .preset-pill:hover {
+        background: rgba(52, 211, 153, 0.15);
+        border-color: rgba(52, 211, 153, 0.4);
+        color: #6ee7b7;
+    }
+    .preset-pill.active {
+        background: rgba(52, 211, 153, 0.25);
+        border-color: #34d399;
+        color: #34d399;
+    }
+    .drop-zone.dragover {
+        border-color: #34d399 !important;
+        background: rgba(16, 185, 129, 0.12) !important;
+        transform: scale(1.01);
+    }
+</style>
+
 <script>
-    async function compressImage() {
-        const fileInput = document.getElementById('comp-file');
-        const sizeInput = document.getElementById('comp-size');
-        const resultDiv = document.getElementById('result');
+    let activeFile = null;
+    let originalImageEl = null;
+    let originalWidth = 0;
+    let originalHeight = 0;
 
-        if (fileInput.files.length === 0) return alert('Select an image');
+    const dropZone = document.getElementById('comp-drop-zone');
+    const fileInput = document.getElementById('comp-file');
+    const sizeInput = document.getElementById('comp-size');
+    const formatSelect = document.getElementById('comp-format');
+    const compressBtn = document.getElementById('compress-btn');
+    const progressArea = document.getElementById('progress-area');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressStatus = document.getElementById('progress-status');
+    const progressPercent = document.getElementById('progress-percent');
+    const resultDiv = document.getElementById('result');
 
+    // Drag & Drop Listeners
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleSelectedFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleSelectedFile(e.target.files[0]);
+        }
+    });
+
+    function setTargetSize(kb) {
+        sizeInput.value = kb;
+        document.querySelectorAll('.preset-pill').forEach(p => p.classList.remove('active'));
+        if (event && event.target) event.target.classList.add('active');
+    }
+
+    function setRelativeTarget(ratio) {
+        if (activeFile) {
+            const kb = Math.max(10, Math.round((activeFile.size / 1024) * ratio));
+            sizeInput.value = kb;
+        } else {
+            sizeInput.value = 100;
+        }
+        document.querySelectorAll('.preset-pill').forEach(p => p.classList.remove('active'));
+        if (event && event.target) event.target.classList.add('active');
+    }
+
+    function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+    }
+
+    function resetFilePicker() {
+        activeFile = null;
+        originalImageEl = null;
+        fileInput.value = '';
+        document.getElementById('file-info-card').style.display = 'none';
+        dropZone.style.display = 'block';
+        resultDiv.style.display = 'none';
+        progressArea.style.display = 'none';
+    }
+
+    function handleSelectedFile(file) {
+        if (!file.type.startsWith('image/') && !file.name.match(/\.(png|jpe?g|webp|bmp|gif|svg|avif|heic)$/i)) {
+            alert('Please select a valid image file (PNG, JPG, WebP, etc.).');
+            return;
+        }
+
+        activeFile = file;
+        resultDiv.style.display = 'none';
+        progressArea.style.display = 'none';
+
+        // Load image into memory to get dimensions & thumbnail
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                originalImageEl = img;
+                originalWidth = img.naturalWidth || img.width;
+                originalHeight = img.naturalHeight || img.height;
+
+                document.getElementById('file-thumbnail').src = e.target.result;
+                document.getElementById('file-name-label').textContent = file.name;
+                document.getElementById('file-size-label').textContent = formatBytes(file.size);
+                document.getElementById('file-dims-label').textContent = `${originalWidth} × ${originalHeight} px`;
+
+                // Set intelligent default target size (e.g. 100KB or 40% of original)
+                const originalKB = Math.round(file.size / 1024);
+                if (originalKB > 200) {
+                    sizeInput.value = Math.max(50, Math.min(300, Math.round(originalKB * 0.35)));
+                } else {
+                    sizeInput.value = Math.max(20, Math.round(originalKB * 0.6));
+                }
+
+                document.getElementById('file-info-card').style.display = 'flex';
+                dropZone.style.display = 'none';
+            };
+            img.onerror = () => {
+                // If browser failed to decode, still allow server-side fallback
+                document.getElementById('file-name-label').textContent = file.name;
+                document.getElementById('file-size-label').textContent = formatBytes(file.size);
+                document.getElementById('file-dims-label').textContent = 'Ready to compress';
+                document.getElementById('file-info-card').style.display = 'flex';
+                dropZone.style.display = 'none';
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function updateProgress(percent, msg) {
+        progressArea.style.display = 'block';
+        progressBarFill.style.width = percent + '%';
+        progressPercent.textContent = percent + '%';
+        if (msg) progressStatus.textContent = msg;
+    }
+
+    /**
+     * Primary: High-speed In-Browser Canvas Multi-pass Compression
+     * Works on any size file up to 50MB+ with zero server limits.
+     */
+    async function compressInBrowser(file, targetSizeKB, requestedFormat) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let img = originalImageEl;
+                if (!img) {
+                    img = await new Promise((resImg, rejImg) => {
+                        const i = new Image();
+                        i.onload = () => resImg(i);
+                        i.onerror = rejImg;
+                        i.src = URL.createObjectURL(file);
+                    });
+                }
+
+                const srcWidth = img.naturalWidth || img.width;
+                const srcHeight = img.naturalHeight || img.height;
+                if (!srcWidth || !srcHeight) throw new Error('Could not calculate image dimensions.');
+
+                // Determine target MIME type
+                let outMime = 'image/jpeg';
+                let ext = 'jpg';
+                const isPngInput = file.type === 'image/png' || file.name.match(/\.png$/i);
+
+                if (requestedFormat === 'png') {
+                    outMime = 'image/png';
+                    ext = 'png';
+                } else if (requestedFormat === 'webp') {
+                    outMime = 'image/webp';
+                    ext = 'webp';
+                } else if (requestedFormat === 'auto') {
+                    // For photos, JPEG provides best ratio. For PNGs with transparency, WebP or PNG.
+                    outMime = isPngInput ? 'image/png' : 'image/jpeg';
+                    ext = isPngInput ? 'png' : 'jpg';
+                } else {
+                    outMime = 'image/jpeg';
+                    ext = 'jpg';
+                }
+
+                const targetBytes = targetSizeKB * 1024;
+                let quality = 0.90;
+                let scale = 1.0;
+                let bestBlob = null;
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Render function for a given scale & quality
+                async function renderBlob(currScale, currQuality) {
+                    const w = Math.max(10, Math.round(srcWidth * currScale));
+                    const h = Math.max(10, Math.round(srcHeight * currScale));
+                    canvas.width = w;
+                    canvas.height = h;
+
+                    // If converting to JPEG, fill background with white so transparent PNGs don't become black
+                    if (outMime === 'image/jpeg') {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, w, h);
+                    } else {
+                        ctx.clearRect(0, 0, w, h);
+                    }
+
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    return new Promise((blobRes) => {
+                        canvas.toBlob((b) => blobRes(b), outMime, currQuality);
+                    });
+                }
+
+                updateProgress(35, 'Encoding initial compression pass...');
+                bestBlob = await renderBlob(scale, quality);
+
+                // If PNG lossless is still too large, suggest/auto-switch to WebP or scale dimensions
+                if (outMime === 'image/png' && bestBlob.size > targetBytes) {
+                    // If target size is strict, adaptively downscale dimensions to hit target
+                    let attempts = 0;
+                    while (bestBlob.size > targetBytes && attempts < 5 && scale > 0.3) {
+                        attempts++;
+                        scale *= 0.85;
+                        updateProgress(35 + attempts * 10, 'Scaling resolution to achieve target KB...');
+                        bestBlob = await renderBlob(scale, quality);
+                    }
+                } else {
+                    // Lossy binary/stepped search for JPEG/WebP
+                    let lowQ = 0.15;
+                    let highQ = 0.92;
+                    let iterations = 0;
+
+                    while (iterations < 6) {
+                        iterations++;
+                        updateProgress(30 + iterations * 10, `Optimizing quality pass ${iterations}...`);
+                        if (bestBlob.size > targetBytes) {
+                            highQ = quality;
+                            quality = (lowQ + highQ) / 2;
+                        } else if (bestBlob.size < targetBytes * 0.75 && quality < 0.90) {
+                            lowQ = quality;
+                            quality = (lowQ + highQ) / 2;
+                        } else {
+                            break;
+                        }
+
+                        // If quality reached lower bounds and file is still over target, downscale dimensions
+                        if (quality <= 0.22 && bestBlob.size > targetBytes && scale > 0.35) {
+                            scale *= 0.82;
+                            quality = 0.70;
+                            lowQ = 0.20;
+                            highQ = 0.85;
+                        }
+
+                        const nextBlob = await renderBlob(scale, quality);
+                        if (nextBlob) {
+                            bestBlob = nextBlob;
+                        }
+                    }
+                }
+
+                updateProgress(90, 'Finalizing compressed image...');
+                resolve({ blob: bestBlob, ext: ext, mimeType: outMime });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    /**
+     * Fallback: Server-side Sharp API Route
+     */
+    async function compressOnServer(file, targetSizeKB, requestedFormat) {
+        updateProgress(50, 'Using server-assisted compression...');
         const formData = new FormData();
-        formData.append('image', fileInput.files[0]);
-        formData.append('size_kb', sizeInput.value);
+        formData.append('image', file);
+        formData.append('size_kb', targetSizeKB);
+        formData.append('format', requestedFormat);
+
+        const res = await fetch('/api/compress-image', { method: 'POST', body: formData });
+        if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText || 'Server compression failed');
+        }
+
+        const blob = await res.blob();
+        const contentType = res.headers.get('content-type') || 'image/jpeg';
+        let ext = 'jpg';
+        if (contentType.includes('png')) ext = 'png';
+        if (contentType.includes('webp')) ext = 'webp';
+
+        return { blob, ext, mimeType: contentType };
+    }
+
+    async function startCompression() {
+        if (!activeFile) {
+            alert('Please select or drop an image first.');
+            return;
+        }
+
+        const targetKB = parseInt(sizeInput.value, 10);
+        if (isNaN(targetKB) || targetKB < 5) {
+            alert('Please enter a valid target size (minimum 5 KB).');
+            return;
+        }
+
+        const format = formatSelect.value;
+        const originalBtnText = compressBtn.innerHTML;
+
+        compressBtn.disabled = true;
+        compressBtn.innerHTML = '<span>⏳ Compressing...</span>';
+        resultDiv.style.display = 'none';
+        updateProgress(15, 'Initializing compression engine...');
 
         try {
-            const res = await fetch('/api/compress-image', { method: 'POST', body: formData });
-            if (!res.ok) throw new Error('Compression failed');
+            let compressionResult = null;
 
-            const blob = await res.blob();
-            const originalName = fileInput.files[0].name.replace(/\.[^/.]+$/, "");
-            const filename = `webtigo-compressed-${originalName}.jpg`;
+            // Step 1: Try in-browser client-side compression (Zero latency, no 10MB limit)
+            try {
+                compressionResult = await compressInBrowser(activeFile, targetKB, format);
+            } catch (clientErr) {
+                console.warn('Client-side compression fell back to server route:', clientErr);
+                compressionResult = await compressOnServer(activeFile, targetKB, format);
+            }
 
+            updateProgress(100, 'Complete!');
+            setTimeout(() => { progressArea.style.display = 'none'; }, 500);
+
+            const blob = compressionResult.blob;
+            const ext = compressionResult.ext;
+            const mimeType = compressionResult.mimeType;
+
+            const baseName = activeFile.name.replace(/\.[^/.]+$/, "");
+            const filename = `webtigo-compressed-${baseName}.${ext}`;
+
+            // Populate Results
+            document.getElementById('res-orig-size').textContent = formatBytes(activeFile.size);
+            document.getElementById('res-new-size').textContent = formatBytes(blob.size);
+
+            const savedPercent = Math.max(0, Math.round(((activeFile.size - blob.size) / activeFile.size) * 100));
+            document.getElementById('res-reduction').textContent = `-${savedPercent}%`;
+
+            const previewUrl = URL.createObjectURL(blob);
+            document.getElementById('res-preview-img').src = previewUrl;
+
+            // Direct local download anchor
+            const downloadBtn = document.getElementById('res-direct-download');
+            downloadBtn.href = previewUrl;
+            downloadBtn.download = filename;
+
+            // Render Webtigo Share Hub (Drive, Email, WhatsApp, Instagram)
             if (window.WebtigoShare) {
                 window.WebtigoShare.renderHub('#comp-share-hub', {
                     blob: blob,
                     filename: filename,
                     title: 'Compressed Image - Webtigo',
-                    text: `Compressed image using Webtigo Image Compressor: ${filename}`,
-                    mimeType: 'image/jpeg',
+                    text: `Compressed image using Webtigo Best Image Compressor: ${filename} (Saved ${savedPercent}%)`,
+                    mimeType: mimeType,
                     subject: 'Compressed Image from Webtigo'
                 });
             }
 
             resultDiv.style.display = 'block';
-        } catch (e) {
-            alert(e.message);
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        } catch (err) {
+            console.error('Compression failure:', err);
+            alert('Image compression failed: ' + err.message);
+            progressArea.style.display = 'none';
+        } finally {
+            compressBtn.disabled = false;
+            compressBtn.innerHTML = originalBtnText;
         }
     }
 </script>
 
-<section class="glass-card" style="margin-top: 3rem; padding: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-    <h2 style="color: white; margin-bottom: 2rem; font-size: 2rem; text-align: center; background: linear-gradient(135deg, white, var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">How It Works & FAQ</h2>
+<section class="glass-card" style="margin-top: 3rem; padding: 3rem 2rem; max-width: 720px; margin-left: auto; margin-right: auto;">
+    <h2 style="color: white; margin-bottom: 2rem; font-size: 2rem; text-align: center; background: linear-gradient(135deg, white, var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">How It Works &amp; FAQ</h2>
     
     <div style="display: grid; gap: 2rem; text-align: left;">
         <div>
-            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">What is image compression?</h4>
-            <p style="color: var(--text-muted); line-height: 1.6;">Image compression is the process of reducing the file size of an image without significantly degrading its visual quality. Webtigo uses "lossy" compression which removes microscopic details that the human eye can't easily see, resulting in much smaller files.</p>
+            <h4 style="color: #34d399; margin-bottom: 0.5rem; font-size: 1.2rem;">What makes Webtigo the best free image compressor?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Webtigo operates on a dual-engine architecture: an ultra-fast client-side canvas engine that processes images 100% privately directly inside your browser with zero server uploads, combined with a high-fidelity serverless sharp engine. You get exact target size control in KB, instant savings up to 90%, zero watermarks, and direct export to Google Drive and WhatsApp.</p>
         </div>
 
         <div>
-            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Why should I use Webtigo Compressor?</h4>
-            <p style="color: var(--text-muted); line-height: 1.6;">Most websites and email attachments have file size limits. A raw photo from your phone can be 8MB, while Webtigo can often shrink it to under 200KB. This speeds up your website, saves mobile data, and clears up cloud storage.</p>
+            <h4 style="color: #34d399; margin-bottom: 0.5rem; font-size: 1.2rem;">Does Webtigo support PNG transparency?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Yes! When compressing PNG images, select "PNG" or "Auto" to retain full alpha channel transparency while reducing file weight. When converting to JPEG, transparent areas are cleanly filled with crisp white backgrounds.</p>
         </div>
 
         <div>
-            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Is it secure?</h4>
-            <p style="color: var(--text-muted); line-height: 1.6;">Yes. We use advanced serverless technology. Your files are processed in a temporary cloud instance and are never stored on a persistent database. As soon as you download your file, it's purged from our systems.</p>
+            <h4 style="color: #34d399; margin-bottom: 0.5rem; font-size: 1.2rem;">Are my photos kept private?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Absolutely. Because Webtigo compresses directly in your browser, your personal photos never leave your device. When using server fallback, files are processed in ephemeral memory and immediately purged with zero storage retention.</p>
         </div>
 
         <div>
-            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.2rem;">Supporting multiple formats</h4>
-            <p style="color: var(--text-muted); line-height: 1.6;">We support JPG, PNG, and WebP. Note that PNG compression is generally less aggressive than JPG, as PNG is a lossless format by nature. Webtigo ensures your transparency is preserved where supported.</p>
+            <h4 style="color: #34d399; margin-bottom: 0.5rem; font-size: 1.2rem;">What formats can I compress?</h4>
+            <p style="color: var(--text-muted); line-height: 1.6;">Webtigo supports all standard web formats: PNG, JPG, JPEG, WebP, BMP, and GIF, with options to export to JPEG, PNG, or WebP.</p>
         </div>
     </div>
 
-    <div style="margin-top: 3rem; padding: 2.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center;">
+    <div style="margin-top: 3rem; padding: 2rem; background: rgba(52, 211, 153, 0.05); border-radius: 20px; border: 1px solid rgba(52, 211, 153, 0.2); text-align: center;">
         <h3 style="color: white; margin-bottom: 1rem;">Need more detail?</h3>
         <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Check out our comprehensive guide on the science of online image optimization and metadata stripping.</p>
         <a href="/blog/compressor" class="primary-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 0.75rem 2rem;">Read Full Blog Guide</a>

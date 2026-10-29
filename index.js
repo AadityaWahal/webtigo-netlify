@@ -187,10 +187,10 @@ app.set('view engine', 'ejs');
 app.set('layout', './layout');
 
 const os = require('os');
-// File Upload Config (Memory storage for Serverless robustness)
+// File Upload Config (Memory storage for Serverless robustness - up to 50MB)
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit per file
+    limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit per file for large raw camera photos and high-res PNGs
 });
 
 // Unified User Session & View Variables (combines Clerk & serverless cookie session)
@@ -520,45 +520,140 @@ app.get('/collaborators', (req, res) => {
 // --- API ROUTES (Serverless Processing) ---
 
 // 1. Image Compressor
-app.post('/api/compress-image', upload.single('image'), async (req, res) => {
+app.post('/api/compress-image', (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(413).send('Image exceeds 50MB limit. Please select a smaller image or use client-side compression.');
+            }
+            return res.status(400).send('Upload error: ' + err.message);
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
         if (!req.file) return res.status(400).send('No image uploaded');
-        const targetSizeKB = parseInt(req.body.size_kb, 10) || 50;
-        let quality = 95;
-        let buffer = req.file.buffer;
+        const targetSizeKB = parseInt(req.body.size_kb, 10) || 100;
+        const requestedFormat = (req.body.format || 'jpg').toLowerCase();
 
-        while (buffer.length > targetSizeKB * 1024 && quality > 10) {
-            buffer = await sharp(req.file.buffer).jpeg({ quality }).toBuffer();
-            quality -= 10;
+        const img = sharp(req.file.buffer, { failOn: 'none' });
+        const metadata = await img.metadata();
+
+        let quality = 88;
+        let scale = 1.0;
+        let outMime = 'image/jpeg';
+        let ext = 'jpg';
+
+        if (requestedFormat === 'png' || (requestedFormat === 'auto' && metadata.format === 'png' && metadata.hasAlpha)) {
+            outMime = 'image/png';
+            ext = 'png';
+        } else if (requestedFormat === 'webp') {
+            outMime = 'image/webp';
+            ext = 'webp';
+        } else {
+            outMime = 'image/jpeg';
+            ext = 'jpg';
         }
 
-        const filename = `compressed_${uuidv4()}.jpg`;
-        res.setHeader('Content-Type', 'image/jpeg');
+        async function processBuffer(currQuality, currScale) {
+            let pipeline = sharp(req.file.buffer, { failOn: 'none' });
+
+            if (currScale < 1.0 && metadata.width && metadata.height) {
+                const targetW = Math.max(100, Math.round(metadata.width * currScale));
+                const targetH = Math.max(100, Math.round(metadata.height * currScale));
+                pipeline = pipeline.resize(targetW, targetH, { fit: 'inside', withoutEnlargement: true });
+            }
+
+            if (ext === 'png') {
+                return await pipeline.png({
+                    quality: Math.max(20, currQuality),
+                    compressionLevel: 9,
+                    palette: true
+                }).toBuffer();
+            } else if (ext === 'webp') {
+                return await pipeline.webp({
+                    quality: Math.max(15, currQuality),
+                    effort: 4
+                }).toBuffer();
+            } else {
+                // If converting to JPEG, flatten transparent alpha onto white
+                if (metadata.hasAlpha) {
+                    pipeline = pipeline.flatten({ background: '#ffffff' });
+                }
+                return await pipeline.jpeg({
+                    quality: Math.max(15, currQuality),
+                    mozjpeg: true
+                }).toBuffer();
+            }
+        }
+
+        let buffer = await processBuffer(quality, scale);
+
+        // Adaptive refinement: If buffer exceeds target size, iteratively reduce quality or scale
+        let attempts = 0;
+        while (buffer.length > targetSizeKB * 1024 && attempts < 6) {
+            attempts++;
+            if (quality > 30) {
+                quality -= 15;
+            } else {
+                scale *= 0.8;
+            }
+            buffer = await processBuffer(quality, scale);
+        }
+
+        const filename = `compressed_${uuidv4().substring(0, 8)}.${ext}`;
+        res.setHeader('Content-Type', outMime);
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.send(buffer);
     } catch (err) {
-        res.status(500).send('Compression Failed');
+        console.error('Compress API error:', err);
+        res.status(500).send('Compression failed: ' + (err.message || 'unknown error'));
     }
 });
 
 // 2. Image Resizer
-app.post('/api/resize-image', upload.single('image'), async (req, res) => {
+app.post('/api/resize-image', (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(413).send('Image exceeds 50MB limit.');
+            }
+            return res.status(400).send('Upload error: ' + err.message);
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
         if (!req.file) return res.status(400).send('No image uploaded');
-        const width = parseInt(req.body.width) || 300;
-        const height = parseInt(req.body.height) || 300;
+        const width = parseInt(req.body.width, 10) || 300;
+        const height = parseInt(req.body.height, 10) || 300;
+        const fit = req.body.fit || 'cover';
 
-        const buffer = await sharp(req.file.buffer)
-            .resize(width, height, { fit: 'cover' })
-            .jpeg({ quality: 90 })
-            .toBuffer();
+        let pipeline = sharp(req.file.buffer, { failOn: 'none' });
+        const metadata = await pipeline.metadata();
 
-        const filename = `resized_${uuidv4()}.jpg`;
+        pipeline = pipeline.resize(width, height, { fit: fit });
+
+        // Preserve PNG transparency if input was PNG
+        if (metadata.format === 'png') {
+            const buffer = await pipeline.png({ compressionLevel: 8 }).toBuffer();
+            const filename = `resized_${uuidv4().substring(0, 8)}.png`;
+            res.setHeader('Content-Type', 'image/png');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            return res.send(buffer);
+        }
+
+        if (metadata.hasAlpha) {
+            pipeline = pipeline.flatten({ background: '#ffffff' });
+        }
+        const buffer = await pipeline.jpeg({ quality: 92, mozjpeg: true }).toBuffer();
+        const filename = `resized_${uuidv4().substring(0, 8)}.jpg`;
         res.setHeader('Content-Type', 'image/jpeg');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.send(buffer);
     } catch (err) {
-        res.status(500).send('Resize Failed');
+        console.error('Resize API error:', err);
+        res.status(500).send('Resize Failed: ' + (err.message || 'unknown error'));
     }
 });
 
