@@ -239,9 +239,9 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     res.render('pages/index', {
-        title: 'Webtigo - Free Online QR Code Generator, Image & Audio Tools',
-        description: 'Access free, premium web utilities on Webtigo created by Aaditya Wahal in India: Webtigo QR Code Generator, Image Compressor, Resizer, Audio Frequencies, and Endless Sync Canvas.',
-        keywords: 'webtigo, webtigo qr code generator, qr code generator, webtigo tools, free online tools, image compressor, image resizer, text to speech, endless sync, aaditya wahal'
+        title: 'Webtigo',
+        description: 'Webtigo is a digital web service providing website and group of websites offering free online tools: Best PDF Combiner, Best QR Code Generator, Best Image Compressor, Text to Speech, Resizer, and Endless Sync Canvas. Engineered by Aaditya Wahal in India.',
+        keywords: 'webtigo, webtigo tools, webtigo group, digital web services, webtigo qr code generator, best pdf combiner, best image compressor, text to speech, endless sync, aaditya wahal'
     });
 });
 
@@ -383,81 +383,81 @@ app.get('/signin', (req, res) => {
 
 app.get('/tts', (req, res) => {
     res.render('pages/tts', {
-        title: 'Free Text to Speech Converter - Download MP3 Audio | Webtigo',
-        description: 'Convert text into natural-sounding speech instantly with Webtigo. Multiple voices, accents, and speeds. Download MP3 audio for free.',
-        keywords: 'webtigo tts, text to speech, webtigo, tts converter, text to mp3, read aloud online, free voice generator'
+        title: 'Best Text to Speech Converter - Natural Voices & Free MP3 | Webtigo',
+        description: 'Webtigo is the best free text to speech converter online. Convert text into natural human-sounding audio with multiple languages, accents, and instant MP3 download.',
+        keywords: 'best text to speech, best free tts, natural text to speech, text to mp3, read aloud online, AI voice generator, webtigo text to speech, free tts converter'
     });
 });
 
 app.get('/compressor', (req, res) => {
     res.render('pages/compressor', {
-        title: 'Image Compressor - Reduce JPG & PNG Size Online | Webtigo',
-        description: 'Compress JPG and PNG images online without losing quality on Webtigo. Reduce file size for faster websites and free sharing. 100% private in browser.',
-        keywords: 'webtigo image compressor, image compressor, compress jpeg, compress png, webtigo, reduce image size, online image optimizer'
+        title: 'Best Free Image Compressor - Reduce JPG, PNG & WebP Online | Webtigo',
+        description: 'Webtigo provides the best free image compressor to reduce JPG, PNG, and WebP file sizes by up to 90% without visible quality loss. 100% private in-browser compression with zero watermarks.',
+        keywords: 'best image compressor, best free image compressor, compress jpg, compress png, reduce image size, best photo compressor online, webtigo image compressor, image optimizer'
     });
 });
 
 app.get('/qrcode', (req, res) => {
     res.render('pages/qrcode', {
-        title: 'Webtigo QR Code Generator - Free High-Resolution QR Creator',
-        description: 'Create high-resolution custom QR codes instantly with the official Webtigo QR Code Generator. Supports URLs, text, Wi-Fi networks, and contact cards. 100% free, private, engineered by Aaditya Wahal in India.',
-        keywords: 'webtigo qr code generator, webtigo qr code, qr code generator, webtigo, free qr creator, url to qr, scan qr code, wifi qr code, qr maker india, aaditya wahal'
+        title: 'Best QR Code Generator - Free High-Resolution QR Creator | Webtigo',
+        description: 'Webtigo is the best free QR code generator to create permanent, high-resolution QR codes for websites, text, Wi-Fi, and contacts with unlimited scans, no expiration, and instant PNG download.',
+        keywords: 'best qr code generator, best free qr code generator, webtigo qr code generator, create qr code free, permanent qr code, qr maker online, high resolution qr code, free qr creator'
     });
 });
 
 app.get('/resizer', (req, res) => {
     res.render('pages/resizer', {
-        title: 'Image Resizer - Change JPG & PNG Dimensions Online | Webtigo',
-        description: 'Resize images to exact pixel dimensions (width & height) on Webtigo. Perfect for YouTube thumbnails, passports, and social media. Fast and free.',
-        keywords: 'webtigo image resizer, image resizer, resize jpg, resize png, webtigo, change photo size, pixel resizer'
+        title: 'Best Image Resizer - Resize JPG & PNG Dimensions Online | Webtigo',
+        description: 'Webtigo is the best free image resizer to adjust photo pixel dimensions (width & height) for YouTube thumbnails, social media, and passports without quality loss.',
+        keywords: 'best image resizer, resize image online, resize photo pixels, 1080x1080 resizer, passport photo resizer, webtigo image resizer, free picture resizer'
     });
 });
 
 app.get('/frequency', (req, res) => {
     res.render('pages/frequency', {
-        title: 'Online Tone Generator - Pure Sine & Square Waves | Webtigo',
-        description: 'Free online frequency generator on Webtigo. Create pure Sine, Square, Sawtooth, and Triangle waves from 20Hz to 20kHz.',
-        keywords: 'webtigo frequency generator, frequency generator, tone generator, webtigo, audio oscillator, sine wave'
+        title: 'Best Online Frequency Generator - Pure Sine & Audio Tone Generator | Webtigo',
+        description: 'Webtigo is the best free online audio frequency generator. Generate pure Sine, Square, Sawtooth, and Triangle sound waves from 20Hz to 20kHz.',
+        keywords: 'best frequency generator, online tone generator, audio oscillator, sine wave generator, 432 hz generator, webtigo frequency generator'
     });
 });
 
 app.get('/frequency-detector', (req, res) => {
     res.render('pages/frequency-detector', {
-        title: 'Frequency Detector - Analyze Pitch & Tones Online | Webtigo',
-        description: 'Free online frequency and pitch detector on Webtigo. Real-time frequency analysis from microphone or sustained tones.',
-        keywords: 'webtigo frequency detector, pitch detector, frequency analyzer, webtigo, microphone tuner'
+        title: 'Best Frequency Detector - Real-Time Audio Pitch Analyzer | Webtigo',
+        description: 'Webtigo is the best free real-time frequency and pitch detector. Analyze audio pitch, detect frequencies via microphone, and tune instruments online.',
+        keywords: 'best frequency detector, pitch detector online, audio analyzer, microphone tuner, detect hz, webtigo frequency detector'
     });
 });
 
 app.get('/case-converter', (req, res) => {
     res.render('pages/case-converter', {
-        title: 'Case Converter Tool - Uppercase, Lowercase & Title Case | Webtigo',
-        description: 'Instantly convert text between Uppercase, Lowercase, Title Case, and Sentence Case on Webtigo. Copy to clipboard with one click.',
-        keywords: 'webtigo case converter, case converter, uppercase to lowercase, title case generator, webtigo'
+        title: 'Best Text Case Converter - Uppercase, Lowercase & Title Case | Webtigo',
+        description: 'Webtigo is the best free case converter tool. Instantly convert text between UPPERCASE, lowercase, Title Case, Sentence case, and camelCase with 1-click copy.',
+        keywords: 'best case converter, uppercase to lowercase, title case generator, text case converter, change letter case online, webtigo case converter'
     });
 });
 
 app.get('/pdf-combiner', (req, res) => {
     res.render('pages/pdf-combiner', {
-        title: 'PDF Combiner - Merge Two or More PDFs Online Free | Webtigo',
-        description: 'Combine two or more PDF files into one document in seconds on Webtigo. Fast, secure, client-side merging with drag & drop reordering and zero file limits.',
-        keywords: 'pdf combiner, merge pdf, combine pdf files, merge two pdfs, pdf joiner, webtigo pdf combiner, free pdf merger, combine multiple pdfs into one'
+        title: 'Best PDF Combiner - Merge Two or More PDFs Online Free | Webtigo',
+        description: 'Webtigo is the best free PDF combiner online. Merge two or more PDF files into one document in seconds with drag-and-drop reordering, 100% private in-browser merging, zero file size limits, and zero watermarks.',
+        keywords: 'best pdf combiner, best free pdf combiner, merge pdf online, combine pdf files, merge two pdfs, pdf joiner, webtigo pdf combiner, free pdf merger, best tool to merge pdf'
     });
 });
 
 app.get('/images-to-pdf', (req, res) => {
     res.render('pages/images-to-pdf', {
-        title: 'JPG to PDF Converter - Merge Images into One PDF | Webtigo',
-        description: 'Convert and merge JPG or PNG images into a single PDF document on Webtigo. Client-side processing with zero server uploads.',
-        keywords: 'webtigo images to pdf, images to pdf, jpg to pdf, png to pdf, combine photos to pdf, webtigo'
+        title: 'Best Images to PDF Converter - Merge JPG & PNG to PDF Free | Webtigo',
+        description: 'Webtigo is the best free images to PDF converter. Merge collections of JPG, PNG, and WebP photos into a clean, organized PDF document in seconds with zero uploads.',
+        keywords: 'best images to pdf, jpg to pdf converter, combine photos to pdf, merge images into pdf, free images to pdf converter, webtigo images to pdf'
     });
 });
 
 app.get('/pdf-to-images', (req, res) => {
     res.render('pages/pdf-to-images', {
-        title: 'PDF to JPG Converter - Extract Pages as Images | Webtigo',
-        description: 'Extract every page from a PDF file as a high-quality JPG image on Webtigo. Download all pages as a ZIP file. Fast and secure.',
-        keywords: 'webtigo pdf to images, pdf to images, pdf to jpg, extract pdf pages, webtigo'
+        title: 'Best PDF to Images Converter - Extract PDF Pages as JPG Free | Webtigo',
+        description: 'Webtigo provides the best free PDF to images extractor. Extract every page from any PDF into crystal-clear JPG photos and download as a ZIP file instantly.',
+        keywords: 'best pdf to images converter, extract pdf pages as jpg, pdf to jpg high quality, convert pdf to images, webtigo pdf to images'
     });
 });
 
